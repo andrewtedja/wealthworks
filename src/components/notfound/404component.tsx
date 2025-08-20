@@ -31,11 +31,11 @@ export default function NotFound() {
 						Whoa!
 					</h1>
 					<h2 className="text-2xl md:text-3xl font-medium mb-6 text-gray-200">
-						That didn't work out.
+						That didn&apos;t work out.
 					</h2>
 					<p className="text-gray-400 text-lg mb-12 max-w-md mx-auto">
-						The page you are looking for either doesn't exist or
-						currently not available
+						The page you are looking for either doesn&apos;t exist
+						or currently not available
 					</p>
 
 					<Link href="/">
