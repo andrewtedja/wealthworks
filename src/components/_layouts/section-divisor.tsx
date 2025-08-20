@@ -2,7 +2,7 @@ export default function SectionDivisor() {
 	return (
 		<div className="relative w-full flex justify-center">
 			{/* Main divisor line */}
-			<div className="relative w-full max-w-4xl h-px">
+			<div className="relative w-full max-w-2xl h-px">
 				{/* Base line */}
 				<div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600/40 to-transparent" />
 

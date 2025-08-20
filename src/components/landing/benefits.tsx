@@ -63,17 +63,17 @@ export default function Benefits() {
 
 				{/* Benefits Grid */}
 				<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-					{benefits.map((benefit, idx) => (
+					{benefits.map((benefit) => (
 						<div className="group relative" key={benefit.title}>
 							<div className="bg-gradient-to-b from-[#05070C] to-[#05070C] rounded-2xl p-8 border border-gray-700/20  border-t-[#505050] border-b-gray-200/5 border-l-[#242323] border-r-[#252525]">
-								<div className="flex flex-col items-center justify-center p-12 bg-gradient-to-r from-[#05070C] to-[#0C0E15] rounded-md border-1 border-t-[#303031] border-b-0 border-l-[#161616] border-r-[#191818] mb-7 ">
-									<div className="bg-[#14161F] rounded-md p-3  mx-auto mb-8 border border-gray-700/30">
+								<div className="flex flex-col items-center justify-center p-12 bg-gradient-to-tr from-[#05070C] to-[#12141f] rounded-md border-1 border-t-[#303031] border-b-0 border-l-[#161616] border-r-[#191818] mb-7 ">
+									<div className="bg-[#14161F] rounded-md p-4 transition-transform duration-400 cursor-pointer group-hover:scale-115 mx-auto  border border-t-gray-200/20 border-r-gray-400/10 border-l-gray-400/10">
 										<div className="flex items-center">
 											{benefit.icons.map(
 												(Icon, iconIdx) => (
 													<div
 														key={iconIdx}
-														className="flex items-center"
+														className="flex items-center "
 													>
 														{iconIdx > 0 && (
 															<div
@@ -81,7 +81,7 @@ export default function Benefits() {
 																key={`divider-${iconIdx}`}
 															></div>
 														)}
-														<Icon className="w-8 h-8 text-gray-500 transition-transform duration-300" />
+														<Icon className="w-8 h-8 text-gray-400 group-hover:text-gray-200 transform-color duration-400" />
 													</div>
 												)
 											)}

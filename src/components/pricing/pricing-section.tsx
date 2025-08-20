@@ -1,8 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, ArrowRight, Tag, Sparkles, Flame } from "lucide-react";
-import { GlowButton } from "../buttons/glow-button";
+import { Check, Flame } from "lucide-react";
 import { GlowButtonTwo } from "../buttons/glow-button-2";
 
 export function PricingSection() {
@@ -49,8 +47,11 @@ export function PricingSection() {
 	return (
 		<section
 			id="pricing"
-			className="relative min-h-screen  text-white py-40 px-4 bg-[#05070C]"
+			className="relative min-h-screen  text-white py-40 px-4 bg-[#06070a] overflow-hidden"
 		>
+			<div className="absolute top-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
+				<div className="w-[500px] h-[500px] bg-gradient-to-t from-indigo-500/30 via-gray-300/12 to-transparent rounded-full blur-3xl"></div>
+			</div>
 			{/* Grid pattern background */}
 			<div
 				className="absolute inset-0 opacity-20"
@@ -65,14 +66,14 @@ export function PricingSection() {
 
 			<div className="relative max-w-7xl mx-auto">
 				{/* Header */}
-				<div className="text-center mb-16">
+				<div className="text-center mb-8">
 					<h1 className="text-4xl md:text-5xl font-bold mb-4">
 						<span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-white">
 							Gabung Member Sekarang!
 						</span>
 					</h1>
 
-					<p className="text-gray-400 text-lg max-w-2xl mx-auto">
+					<p className="text-gray-400 text-md max-w-2xl mx-auto">
 						Choose a plan that fits your goals and scale as you grow
 					</p>
 
@@ -91,42 +92,59 @@ export function PricingSection() {
 
 				{/* Pricing Cards */}
 				<div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-					{plans.map((plan, index) => (
+					{plans.map((plan) => (
 						<Card
 							key={plan.name}
-							className={`relative bg-[#05070C] border-gray-800 backdrop-blur-sm ${
-								plan.popular ? "ring-2 ring-yellow-300/50" : ""
-							}`}
+							className={`relative bg-gradient-to-tr from-[#010205] to-[#141414] border border-gray-700/20  border-t-[#747070] border-b-gray-200/10 border-l-[#363535] border-r-[#383737] backdrop-blur-sm`}
+
+							// ${
+							// 	plan.popular ? "ring-2 ring-yellow-300/50" : ""
+							// }
 						>
-							{plan.popular && (
-								<div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-									<Badge className="bg-yellow-600 text-white px-3 py-1 text-xs">
-										<Flame className="" />
+							{/* Featured Badge */}
+							{/* {plan.popular && (
+								<div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+									<Badge className="flex items-center gap-1 bg-gray-800 text-white px-3 py-1 text-xs rounded-full shadow-md">
+										<Flame className="w-3 h-3 text-yellow-400" />
 										Popular
 									</Badge>
 								</div>
-							)}
+							)} */}
 
 							<CardHeader className="pb-4">
-								<div className="text-xl font-medium text-gray-400 mb-2">
-									{plan.name}
+								<div className="flex items-center gap-2 mb-2">
+									<div
+										className={`text-lg font-medium text-gray-200`}
+									>
+										{plan.name}
+									</div>
+
+									{plan.popular && (
+										<Badge className="flex items-center gap-1 bg-[#1f212b] border border-gray-700/50 border-t-[#747070] border-b-gray-200/5 border-l-[#413f3f] border-r-[#747171] rounded-full shadow-md px-2 py-1 text-xs backdrop-blur-sm">
+											<Flame className="w-3 h-3 text-yellow-400" />
+											Popular
+										</Badge>
+									)}
 								</div>
+
 								<div className="flex items-baseline gap-1">
-									<span className="text-2xl font-bold text-white">
+									<span className="text-4xl font-bold text-gray-300">
 										{plan.price}
 									</span>
-									<span className="text-gray-400 text-sm">
+									<span className="text-gray-300 text-sm underline">
 										{plan.period}
 									</span>
 								</div>
 							</CardHeader>
 
-							<CardContent className="space-y-6">
+							<CardContent className="space-y-8">
 								<div className="w-full flex items-center justify-center">
 									<GlowButtonTwo>
 										Mulai Berlangganan
 									</GlowButtonTwo>
 								</div>
+
+								<hr className="border-gray-700/30 border-dashed my-4" />
 
 								<div className="space-y-3">
 									{plan.features.map(
@@ -136,7 +154,7 @@ export function PricingSection() {
 												className="flex items-start gap-3"
 											>
 												<Check className="w-4 h-4 text-sky-200 mt-0.5 flex-shrink-0" />
-												<span className="text-gray-300 text-sm leading-relaxed">
+												<span className="text-gray-300 text-md leading-relaxed">
 													{feature}
 												</span>
 											</div>
@@ -148,9 +166,9 @@ export function PricingSection() {
 					))}
 				</div>
 			</div>
-			<div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
-				<div className="w-[500px] h-[350px] bg-gradient-to-t from-indigo-500/30 via-gray-300/12 to-transparent rounded-full blur-3xl"></div>
-			</div>
+			{/* <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
+				<div className="w-[400px] h-[250px] bg-gradient-to-t from-indigo-500/30 via-gray-300/12 to-transparent rounded-full blur-3xl"></div>
+			</div> */}
 		</section>
 	);
 }

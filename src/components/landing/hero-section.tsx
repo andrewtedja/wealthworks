@@ -1,15 +1,7 @@
 "use client";
 
-import { Instrument_Serif } from "next/font/google";
-
-const instrumentSerif = Instrument_Serif({
-	subsets: ["latin"],
-	weight: "400",
-});
-
 import { motion } from "framer-motion";
-import { ArrowRight, Instagram, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Instagram, X } from "lucide-react";
 import Sparkles from "../decoration/sparkles";
 import { GlowButton } from "../buttons/glow-button";
 import LogoSmall from "../logo/logo-small";
@@ -24,7 +16,9 @@ export function HeroSection() {
 				autoPlay
 				loop
 				muted
+				preload="none"
 				playsInline
+				poster="/images/landing-page/hero-video-bg.jpg"
 				className="absolute inset-0 w-full h-full object-cover grayscale"
 				style={{ backgroundColor: "rgba(204, 8, 8, 0)" }}
 			/>
@@ -35,7 +29,7 @@ export function HeroSection() {
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.8 }}
+					transition={{ duration: 0.7 }}
 					className="mb-12"
 				>
 					{/* Logo */}
@@ -44,7 +38,6 @@ export function HeroSection() {
 							{/* Logo Container with enhanced 3D effect - double square structure */}
 							<div className="relative">
 								{/* Outer glow ring */}
-								<div className="absolute inset-0 bg-blue-500/20 rounded-2xl blur-md "></div>
 								<div className="absolute inset-0 bg-blue-400/15 rounded-2xl blur-lg "></div>
 
 								{/* Bottom concentrated glow - brighter */}
@@ -70,20 +63,22 @@ export function HeroSection() {
 				<motion.div
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
-					transition={{ duration: 0.8, delay: 0.2 }}
+					transition={{ duration: 0.7 }}
 					className="flex items-center justify-center gap-2 mb-4"
 				>
 					<div className="relative">
 						<div className="w-2 h-2 bg-[#A6DAFF] rounded-full" />
 						<div className="absolute inset-0 w-2 h-2 bg-[#A6DAFF] rounded-full animate-ping opacity-50" />
 					</div>
-					<span className="text-gray-300 text-sm">What's New</span>
+					<span className="text-gray-300 text-sm">
+						What&apos;s New
+					</span>
 				</motion.div>
 
 				<motion.h1
 					initial={{ opacity: 0, y: 30 }}
 					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.8, delay: 0.4 }}
+					transition={{ duration: 0.7, delay: 0.2 }}
 					className="text-5xl md:text-7xl font-bold mb-7 leading-tight"
 					style={{
 						fontFamily: "Inter, Inter Placeholder, sans-serif",
@@ -106,7 +101,7 @@ export function HeroSection() {
 				<motion.p
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
-					transition={{ duration: 0.8, delay: 0.6 }}
+					transition={{ duration: 0.7, delay: 0.4 }}
 					className="text-gray-300 text-md mb-4"
 				>
 					Siap untuk Belajar?
@@ -115,7 +110,7 @@ export function HeroSection() {
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.8, delay: 0.8 }}
+					transition={{ duration: 0.7, delay: 0.6 }}
 					className="mb-12 relative"
 				>
 					<GlowButton>Join Komunitas Gratis Kami</GlowButton>
@@ -145,7 +140,7 @@ export function HeroSection() {
 				<motion.div
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
-					transition={{ duration: 0.8, delay: 1 }}
+					transition={{ duration: 0.7, delay: 0.8 }}
 					className="flex items-center justify-center gap-12 mt-4"
 				>
 					{" "}

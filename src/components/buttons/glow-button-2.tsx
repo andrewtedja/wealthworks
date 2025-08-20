@@ -1,6 +1,6 @@
 import type React from "react";
 import { cn } from "@/lib/utils";
-import { ArrowUpRight, CircleArrowOutUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 
 interface GlowButtonTwoProps
 	extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -17,7 +17,7 @@ export function GlowButtonTwo({
 		<button
 			className={cn(
 				// Base styles
-				"relative px-10 py-3 w-full rounded-xl bg-black/80 text-white text-sm font-medium",
+				"relative px-10 py-3 w-full rounded-xl bg-black/20 text-white text-sm font-medium",
 				"border-2 border-gray-600/50 backdrop-blur-sm blur-out-3xl",
 				"transition-all duration-500 ease-out",
 				"overflow-hidden group",
@@ -41,6 +41,7 @@ export function GlowButtonTwo({
 			{/* Content */}
 			<span className="relative z-10 flex items-center justify-center gap-2">
 				{children}
+				<ArrowUpRight />
 			</span>
 		</button>
 	);

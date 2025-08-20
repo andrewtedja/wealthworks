@@ -1,6 +1,6 @@
 import type React from "react";
 import { cn } from "@/lib/utils";
-import { ArrowUpRight, CircleArrowOutUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 
 interface GlowButtonProps
 	extends React.ButtonHTMLAttributes<HTMLButtonElement> {
