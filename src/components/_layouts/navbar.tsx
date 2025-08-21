@@ -54,7 +54,7 @@ export function Navbar() {
 							</a>
 							<Button
 								variant="outline"
-								className="bg-transparent border-gray-600 text-white hover:bg-gray-800 hover:border-gray-500"
+								className="bg-gradient-to-br from-[#10121A] to-[#212327] hover:bg-gradient-to-tr hover:from-[#10121A] hover:to-[#212327] border-gray-600 text-gray-300 hover:text-gray-100 hover:bg-gray-800/30 py-5 font-bold text-sm"
 							>
 								<Sparkles className="w-4 h-4 mr-2" />
 								Sign Up

@@ -28,7 +28,8 @@ export default function Home() {
 				<SectionDivisor />
 				<JoinNow />
 			</main>
-			<Footer />
+			<SectionDivisor />
+			<Footer companyName="WealthWorks" />
 		</div>
 	);
 }

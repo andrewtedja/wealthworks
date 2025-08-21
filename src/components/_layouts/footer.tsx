@@ -1,5 +1,12 @@
 import type React from "react";
-import { Mail, MessageCircle } from "lucide-react";
+import {
+	Instagram,
+	Mail,
+	MessageCircle,
+	MessageSquare,
+	Twitter,
+} from "lucide-react";
+import LogoFull from "../logo/logo-full";
 
 interface FooterProps {
 	companyName?: string;
@@ -13,28 +20,51 @@ interface FooterProps {
 	}[];
 }
 
+type SocialLinkProps = {
+	name: string;
+	href: string;
+	icon: React.ReactNode;
+};
+
+const defaultSocialLinks: SocialLinkProps[] = [
+	{
+		name: "Instagram",
+		href: "https://instagram.com/yourbusiness",
+		icon: <Instagram className="w-5 h-5" />,
+	},
+	{
+		name: "Discord",
+		href: "https://discord.gg/yourbusiness",
+		icon: <MessageSquare className="w-5 h-5" />,
+	},
+	{
+		name: "Twitter",
+		href: "https://twitter.com/yourbusiness",
+		icon: <Twitter className="w-5 h-5" />,
+	},
+];
+
 export default function Footer({
 	companyName = "Your Business",
-	description = "Komunitas dua arah untuk belajar bisnis modern",
-	email = "hello@yourbusiness.com",
-	whatsapp = "0897 7701 451",
-	socialLinks = [],
+	description = "",
+	email = "WealthWorks.management@gmail.com",
+	whatsapp = "+6281234567890",
+	socialLinks: propSocialLinks,
 }: FooterProps) {
 	const currentYear = new Date().getFullYear();
+	const socialLinks = propSocialLinks ?? defaultSocialLinks;
 
 	return (
 		<footer className="bg-black text-white">
-			<div className="max-w-6xl mx-auto px-6 py-12">
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+			<div className="max-w-7xl mx-auto px-6 py-12">
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
 					{/* Brand Section - Left */}
 					<div className="space-y-4">
 						<div className="flex items-center space-x-3">
-							<div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-								<div className="w-5 h-5 bg-black rounded"></div>
-							</div>
-							<span className="text-xl font-semibold">
+							<LogoFull size={140} />
+							{/* <span className="text-xl font-semibold">
 								{companyName}
-							</span>
+							</span> */}
 						</div>
 						<p className="text-gray-400 text-sm leading-relaxed">
 							{description}
@@ -42,7 +72,7 @@ export default function Footer({
 					</div>
 
 					{/* Social Media - Center */}
-					<div className="space-y-4 md:text-center">
+					{/* <div className="space-y-4 md:text-center">
 						<h3 className="text-lg font-medium">Social Media</h3>
 						{socialLinks.length > 0 && (
 							<div className="flex justify-center md:justify-center space-x-4">
@@ -58,7 +88,7 @@ export default function Footer({
 								))}
 							</div>
 						)}
-					</div>
+					</div> */}
 
 					{/* Contact - Right */}
 					<div className="space-y-4 md:text-right">
@@ -94,7 +124,7 @@ export default function Footer({
 
 			{/* Copyright */}
 			<div className="border-t border-gray-800">
-				<div className="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center">
+				<div className="max-w-7xl mx-auto px-6 py-5 flex flex-col md:flex-row justify-between items-center">
 					<p className="text-gray-500 text-sm">
 						{companyName} ©{currentYear} All rights reserved
 					</p>
