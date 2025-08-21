@@ -19,7 +19,7 @@ const Sparkles = () => {
 							rotate: [0, 180, 360],
 						}}
 						transition={{
-							duration: 6,
+							duration: 3,
 							repeat: Number.POSITIVE_INFINITY,
 							delay: i * 0.8,
 							ease: "easeInOut",
@@ -44,9 +44,9 @@ const Sparkles = () => {
 								scale: [0, 1.5, 0],
 							}}
 							transition={{
-								duration: 5,
+								duration: 2.5,
 								repeat: Number.POSITIVE_INFINITY,
-								delay: i * 1,
+								delay: i * 0.8,
 								ease: "easeInOut",
 							}}
 						/>

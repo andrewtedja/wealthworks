@@ -161,7 +161,6 @@ export function HeroSection() {
 					</div>
 				</motion.div>
 			</div>
-			<Sparkles />
 		</section>
 	);
 }
