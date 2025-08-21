@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { Instagram, X } from "lucide-react";
-import Sparkles from "../decoration/sparkles";
 import { GlowButton } from "../buttons/glow-button";
 import LogoSmall from "../logo/logo-small";
 import LogoDiscord from "../logo/logo-dc";
@@ -79,10 +78,9 @@ export function HeroSection() {
 					initial={{ opacity: 0, y: 30 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.7, delay: 0.2 }}
-					className="text-5xl md:text-7xl font-bold mb-7 leading-tight"
+					className="text-[28px] lg:text-[72px] font-bold mb-7 leading-tight"
 					style={{
 						fontFamily: "Inter, Inter Placeholder, sans-serif",
-						fontSize: "72px",
 						fontWeight: 500,
 						letterSpacing: "-0.02em",
 						textAlign: "center",

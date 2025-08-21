@@ -53,7 +53,7 @@ export default function Benefits() {
 						</div>
 					</div>
 
-					<h2 className="text-4xl md:text-5xl text-white font-medium mb-4">
+					<h2 className="text-4xl md:text-5xl text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500 font-medium mb-4">
 						Kenapa pilih WealthWorks?
 					</h2>
 					<p className="text-gray-400 text-lg">

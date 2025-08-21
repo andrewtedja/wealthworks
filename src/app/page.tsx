@@ -11,7 +11,7 @@ import { PricingSection } from "@/components/pricing/pricing-section";
 
 export default function Home() {
 	return (
-		<div className="flex flex-col bg-[#05070E]">
+		<div className="flex flex-col bg-[#05070E] w-full overflow-auto">
 			<Navbar />
 			<main>
 				<HeroSection />

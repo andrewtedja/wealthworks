@@ -7,7 +7,7 @@ import Sparkles from "../decoration/sparkles";
 
 export default function NotFound() {
 	return (
-		<div className="min-h-screen bg-black text-white flex items-center justify-center relative overflow-hidden">
+		<div className="min-h-screen bg-[#05070E] text-white flex items-center justify-center relative overflow-hidden">
 			{/* Large 404 Background Text */}
 			<div className="absolute inset-0 flex items-center justify-center">
 				<motion.div
@@ -34,8 +34,7 @@ export default function NotFound() {
 						That didn&apos;t work out.
 					</h2>
 					<p className="text-gray-400 text-lg mb-12 max-w-md mx-auto">
-						The page you are looking for either doesn&apos;t exist
-						or currently not available
+						Halaman yang Anda cari tidak dapat ditemukan.
 					</p>
 
 					<Link href="/">
@@ -45,7 +44,7 @@ export default function NotFound() {
 							whileTap={{ scale: 0.98 }}
 						>
 							<ArrowLeft className="w-4 h-4" />
-							Go to homepage
+							Balik ke home
 						</motion.button>
 					</Link>
 				</motion.div>

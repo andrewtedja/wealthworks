@@ -54,10 +54,10 @@ export default function SourcesSection() {
 	];
 
 	return (
-		<div className="py-12 bg-[#05070E] relative ">
+		<div className="py-12 px-4 bg-[#05070E] relative ">
 			<div className="container mx-auto px-4 py-16">
 				<div className="text-center mb-12">
-					<h1 className="text-4xl md:text-5xl font-medium mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-600">
+					<h1 className="text-4xl md:text-5xl font-medium mb-4 py-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-600">
 						Utilizing data from
 					</h1>
 					<p className="text-gray-500 text-md">
@@ -65,7 +65,7 @@ export default function SourcesSection() {
 					</p>
 				</div>
 
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
 					{companies.map((company) => (
 						<Card
 							key={company.id}
