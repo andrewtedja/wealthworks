@@ -1,11 +1,5 @@
 import type React from "react";
-import {
-	Instagram,
-	Mail,
-	MessageCircle,
-	MessageSquare,
-	Twitter,
-} from "lucide-react";
+import { Mail, MessageCircle } from "lucide-react";
 import LogoFull from "../logo/logo-full";
 
 interface FooterProps {
@@ -20,39 +14,39 @@ interface FooterProps {
 	}[];
 }
 
-type SocialLinkProps = {
-	name: string;
-	href: string;
-	icon: React.ReactNode;
-};
+// type SocialLinkProps = {
+// 	name: string;
+// 	href: string;
+// 	icon: React.ReactNode;
+// };
 
-const defaultSocialLinks: SocialLinkProps[] = [
-	{
-		name: "Instagram",
-		href: "https://instagram.com/yourbusiness",
-		icon: <Instagram className="w-5 h-5" />,
-	},
-	{
-		name: "Discord",
-		href: "https://discord.gg/yourbusiness",
-		icon: <MessageSquare className="w-5 h-5" />,
-	},
-	{
-		name: "Twitter",
-		href: "https://twitter.com/yourbusiness",
-		icon: <Twitter className="w-5 h-5" />,
-	},
-];
+// const defaultSocialLinks: SocialLinkProps[] = [
+// 	{
+// 		name: "Instagram",
+// 		href: "https://instagram.com/yourbusiness",
+// 		icon: <Instagram className="w-5 h-5" />,
+// 	},
+// 	{
+// 		name: "Discord",
+// 		href: "https://discord.gg/yourbusiness",
+// 		icon: <MessageSquare className="w-5 h-5" />,
+// 	},
+// 	{
+// 		name: "Twitter",
+// 		href: "https://twitter.com/yourbusiness",
+// 		icon: <Twitter className="w-5 h-5" />,
+// 	},
+// ];
 
 export default function Footer({
 	companyName = "Your Business",
 	description = "",
 	email = "WealthWorks.management@gmail.com",
 	whatsapp = "+6281234567890",
-	socialLinks: propSocialLinks,
-}: FooterProps) {
+}: // socialLinks: propSocialLinks,
+FooterProps) {
 	const currentYear = new Date().getFullYear();
-	const socialLinks = propSocialLinks ?? defaultSocialLinks;
+	// const socialLinks = propSocialLinks ?? defaultSocialLinks;
 
 	return (
 		<footer className="bg-black text-white">
