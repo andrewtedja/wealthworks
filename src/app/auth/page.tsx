@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +21,14 @@ import Link from "next/link";
 import LogoSmall from "@/components/logo/logo-small";
 
 export default function AuthPage() {
+	return (
+		<Suspense fallback={<div>Loading...</div>}>
+			<AuthPageContent />
+		</Suspense>
+	);
+}
+
+function AuthPageContent() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [phone, setPhone] = useState("");
 

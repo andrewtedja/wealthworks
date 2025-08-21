@@ -47,18 +47,22 @@ export function Navbar() {
 						</div>
 
 						<div className="hidden md:flex items-center space-x-4">
-							<a
-								href="#"
+							<Link
+								href={`/auth?tab=login`}
 								className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
 							>
 								Login
-							</a>
+							</Link>
+
 							<Button
+								asChild
 								variant="outline"
 								className="bg-gradient-to-br from-[#10121A] to-[#212327] hover:bg-gradient-to-tr hover:from-[#10121A] hover:to-[#212327] border-gray-600 text-gray-300 hover:text-gray-100 hover:bg-gray-800/30 py-5 font-bold text-sm"
 							>
-								<Sparkles className="w-4 h-4 mr-2" />
-								Sign Up
+								<Link href={`/auth?tab=signup`}>
+									<Sparkles className="w-4 h-4 mr-2" />
+									Sign Up
+								</Link>
 							</Button>
 						</div>
 
@@ -128,7 +132,7 @@ export function Navbar() {
 											ease: [0.22, 1, 0.36, 1],
 										}}
 									>
-										<a
+										<Link
 											href={item.href}
 											className="group block relative py-4 px-4 rounded-xl hover:bg-white/5 transition-all duration-300"
 											onClick={toggleMenu}
@@ -141,7 +145,7 @@ export function Navbar() {
 
 											{/* Hover line effect */}
 											<div className="absolute bottom-2 left-4 right-4 h-px bg-gradient-to-r from-transparent via-[#A6DAFF]/30 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
-										</a>
+										</Link>
 									</motion.div>
 								))}
 							</div>
