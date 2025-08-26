@@ -17,7 +17,6 @@ export function HeroSection() {
 				muted
 				preload="none"
 				playsInline
-				poster="/images/landing-page/hero-video-bg.jpg"
 				className="absolute inset-0 w-full h-full object-cover grayscale"
 				style={{ backgroundColor: "rgba(204, 8, 8, 0)" }}
 			/>
