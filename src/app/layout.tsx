@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { cookies } from "next/headers";
 
 const inter = Inter({
 	variable: "--font-inter",
@@ -46,15 +47,37 @@ export const metadata: Metadata = {
 	// },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const noFlashScript = `
+    (function () {
+      try {
+        var t = localStorage.getItem('theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (t === 'dark' || (!t && prefersDark)) document.documentElement.classList.add('dark');
+        else document.documentElement.classList.remove('dark');
+      } catch (e) {}
+    })();
+  `;
+
+	const theme =
+		(await cookies()).get("theme")?.value === "dark" ? "dark" : "light";
+	const isDark = theme ? theme === "dark" : false;
+
 	return (
-		<html lang="en">
+		<html
+			lang="en"
+			className={isDark ? "dark" : undefined}
+			suppressHydrationWarning
+		>
+			<head>
+				<script dangerouslySetInnerHTML={{ __html: noFlashScript }} />
+			</head>
 			<body
-				className={`${inter.className} antialiased`}
+				className={`${inter.className} bg-background text-foreground antialiased`}
 				suppressHydrationWarning
 			>
 				{children}
