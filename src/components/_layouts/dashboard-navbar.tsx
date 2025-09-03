@@ -11,11 +11,16 @@ import {
 	Crown,
 } from "lucide-react";
 import LogoFull from "../logo/logo-full";
+import { signout } from "@/lib/auth-actions";
 
 export default function LoggedInNavbar() {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [searchValue, setSearchValue] = useState("");
 	const [isDarkMode, setIsDarkMode] = useState(false);
+
+	const handleSignOut = async () => {
+		await signout();
+	};
 
 	useEffect(() => {
 		const root = document.documentElement;
@@ -80,7 +85,7 @@ export default function LoggedInNavbar() {
 							value={searchValue}
 							onChange={(e) => setSearchValue(e.target.value)}
 							placeholder="Search..."
-							className={`block w-full pl-10 pr-3 py-2 border rounded-lg text-sm bg-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent border-gray-600  text-white hover:border-gray-500`}
+							className={`block w-full pl-10 pr-3 py-2 border rounded-lg text-sm  bg-background placeholder-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent border-gray-600 hover:border-gray-500`}
 							// ${
 							// 	isDarkMode
 							// 		? "border-gray-600 bg-gray-800 text-white hover:border-gray-500"
@@ -204,7 +209,10 @@ export default function LoggedInNavbar() {
 								<div className="border-t border-gray-700 my-1"></div>
 
 								{/* Logout Button */}
-								<button className="w-full px-4 py-2 text-left text-red-400 hover:bg-gray-800 flex items-center space-x-2 text-sm">
+								<button
+									className="w-full px-4 py-2 text-left text-red-400 hover:bg-gray-800 flex items-center space-x-2 text-sm"
+									onClick={handleSignOut}
+								>
 									<LogOut className="h-4 w-4" />
 									<span>Logout</span>
 								</button>

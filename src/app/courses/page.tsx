@@ -4,59 +4,34 @@ import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Clock, BookOpen, Play } from "lucide-react";
+import { BookOpen, Play } from "lucide-react";
 import Link from "next/link";
 import LoggedInNavbar from "@/components/_layouts/dashboard-navbar";
 import Image from "next/image";
+import { dummyCourse, dummyTopics } from "@/constants/dummy";
 
 // Mock data - in real app this would come from API/database
-const courses = [
-	{
-		id: "crypto-basics",
-		title: "Crypto & Blockchain Basic: From History to Market Mastery",
-		description:
-			"Learn the fundamentals of cryptocurrency and blockchain technology from the ground up.",
-		thumbnail: "/images/thumbnails/image.png",
-		lessons: 8,
-		duration: "4 hours",
-		progress: 0,
-		topic: "Blockchain Technology",
-	},
-	{
-		id: "crypto-trading",
-		title: "Crypto Trading & Investment Strategies",
-		description:
-			"Master technical analysis and develop profitable trading strategies.",
-		thumbnail: "/images/thumbnails/image.png",
-		lessons: 12,
-		duration: "8 hours",
-		progress: 0,
-		topic: "Crypto Trading",
-	},
-	{
-		id: "ai-basics",
-		title: "Artificial Intelligence Basic: From Machine Learning to Deep Learning",
-		description:
-			"Learn the fundamentals of artificial intelligence and machine learning from the ground up.",
-		thumbnail: "/images/thumbnails/image.png",
-		lessons: 10,
-		duration: "6 hours",
-		progress: 0,
-		topic: "Artificial Intelligence",
-	},
-];
+function getCourseProgressFromDummy(c: {
+	readonly _lessons?: readonly { readonly completed?: boolean }[];
+}) {
+	const total = c._lessons?.length ?? 0;
+	const done = c._lessons?.filter((l) => l.completed).length ?? 0;
+	const pct = total ? Math.round((done / total) * 100) : 0;
+	return { total, pct };
+}
+
+const courses = dummyCourse.map((c) => {
+	const { pct, total } = getCourseProgressFromDummy(c);
+	return { ...c, progress: pct, lessons: total };
+});
+
+const topics = dummyTopics.map((topic) => topic.name) as readonly string[];
 
 type TopicKey = "all" | string;
 
 export default function CoursesPage() {
 	// Topic-only filtering
 	const [activeTopic, setActiveTopic] = useState<TopicKey>("all");
-
-	const topics = useMemo(() => {
-		const set = new Set<string>();
-		courses.forEach((c) => set.add(c.topic));
-		return Array.from(set);
-	}, []);
 
 	// Latest = first course
 	const featured = courses[0];
@@ -67,7 +42,7 @@ export default function CoursesPage() {
 	}, [activeTopic]);
 
 	return (
-		<div className="min-h-screen bg-[#05070E]">
+		<div className="min-h-screen bg-background">
 			<LoggedInNavbar />
 
 			<main className="container mx-auto px-4 py-8">
@@ -219,13 +194,17 @@ export default function CoursesPage() {
 								<Card className="group  transition-all duration-300 cursor-pointer border-0 border-border/50 hover:border-[#A6DAFF]/50 dark:hover:border-[#A6DAFF]/30 hover:shadow-xl  lg:h-128 py-0 gap-0 hover:scale-103">
 									<CardHeader className="p-0">
 										<div className="relative overflow-hidden rounded-lg">
-											<img
+											<Image
 												src={
 													course.thumbnail ||
 													"/placeholder.svg"
 												}
 												alt={course.title}
 												className="w-full h-54 p-3 object-cover rounded-2xl duration-200"
+												width={540}
+												height={360}
+												placeholder="blur"
+												blurDataURL="/placeholder.svg"
 											/>
 											<Badge
 												variant="secondary"
@@ -252,10 +231,6 @@ export default function CoursesPage() {
 												<span>
 													{course.lessons} lessons
 												</span>
-											</div>
-											<div className="flex items-center gap-1">
-												<Clock className="h-3 w-3" />
-												<span>{course.duration}</span>
 											</div>
 										</div>
 

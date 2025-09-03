@@ -73,7 +73,7 @@ export async function signout() {
 		redirect("/error");
 	}
 
-	redirect("/logout");
+	redirect("/");
 }
 
 export async function updateProfile(username: string, phone: string) {

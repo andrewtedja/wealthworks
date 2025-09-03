@@ -6,274 +6,244 @@ import {
 	Play,
 	CheckCircle,
 	Circle,
-	Clock,
 	BookOpen,
 	ChevronRight,
 	FileText,
-	Video,
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import LoggedInNavbar from "@/components/_layouts/dashboard-navbar";
+import { dummyCourse } from "@/constants/dummy";
+import Image from "next/image";
 
-// Mock data - in real app this would come from API/database
-const courseData = {
-	"crypto-basics": {
-		id: "crypto-basics",
-		title: "Crypto & Blockchain Basic: From History to Market Mastery",
-		description:
-			"Master the fundamentals of cryptocurrency and blockchain technology. This comprehensive course covers everything from the history of digital currencies to advanced market analysis techniques.",
-		thumbnail: "/cryptocurrency-bitcoin-golden-coins-blockchain.png",
-		totalLessons: 8,
-		duration: "4 hours",
-		progress: 0,
-		lessons: [
-			{
-				id: 1,
-				title: "Pengenalan Blockchain Tech di Balik Cryptocurrency",
-				type: "video",
-				duration: "25 min",
-				completed: false,
-				description:
-					"Understanding the fundamental technology behind cryptocurrencies",
-			},
-			{
-				id: 2,
-				title: "Sejarah Dari Bitcoin",
-				type: "video",
-				duration: "30 min",
-				completed: false,
-				description: "The complete history and evolution of Bitcoin",
-			},
-			{
-				id: 3,
-				title: "Sejarah Dari Altcoin",
-				type: "video",
-				duration: "28 min",
-				completed: false,
-				description:
-					"Alternative cryptocurrencies and their development",
-			},
-			{
-				id: 4,
-				title: "Crypto Market Cycle Theory",
-				type: "text",
-				duration: "20 min",
-				completed: false,
-				description: "Understanding market cycles in cryptocurrency",
-			},
-			{
-				id: 5,
-				title: "Bedah Pilihan Investasi Terbaik",
-				type: "video",
-				duration: "35 min",
-				completed: false,
-				description: "Analyzing the best investment options in crypto",
-			},
-			{
-				id: 6,
-				title: "Kapan Waktu Membeli Crypto yang Tepat",
-				type: "video",
-				duration: "32 min",
-				completed: false,
-				description: "Timing strategies for cryptocurrency purchases",
-			},
-			{
-				id: 7,
-				title: "Altcoins & Paradox of Choices",
-				type: "text",
-				duration: "25 min",
-				completed: false,
-				description:
-					"Navigating the complex world of alternative cryptocurrencies",
-			},
-			{
-				id: 8,
-				title: "Kenapa Narrative di Crypto Sengaja Diciptakan?",
-				type: "video",
-				duration: "40 min",
-				completed: false,
-				description: "Understanding market narratives and their impact",
-			},
-		],
-	},
-};
+export default async function CourseDetailPage({
+	params,
+}: {
+	params: Promise<{ courseId: string }>;
+}) {
+	const { courseId } = await params;
 
-interface CourseDetailPageProps {
-	params: {
-		courseId: string;
-	};
-}
+	const course = dummyCourse.find((c) => c.id === courseId);
+	if (!course) notFound();
 
-export default function CourseDetailPage({ params }: CourseDetailPageProps) {
-	const course = courseData[params.courseId as keyof typeof courseData];
+	const lessonsView = [...(course._lessons ?? [])]
+		.sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))
+		.map((l) => ({
+			id: l.id,
+			title: l.title,
+			description: l.description ?? "",
+			// icons expect "video" or "text"; treat pdf like "text" for now
+			type: l.content_type === "text" ? "text" : "video",
+			completed: !!l.completed,
+		}));
 
-	if (!course) {
-		notFound();
-	}
+	const totalLessons = lessonsView.length;
 
-	const completedLessons = course.lessons.filter(
-		(lesson) => lesson.completed
-	).length;
-	const progressPercentage = Math.round(
-		(completedLessons / course.totalLessons) * 100
-	);
+	const completed = lessonsView.filter((l) => l.completed).length;
+
+	const pct = totalLessons ? Math.round((completed / totalLessons) * 100) : 0;
+	const firstIncomplete =
+		lessonsView.find((l) => !l.completed) ?? lessonsView[0];
 
 	return (
 		<div className="min-h-screen bg-background">
 			<LoggedInNavbar />
 
 			<main className="container mx-auto px-4 py-8">
-				<div className="grid lg:grid-cols-3 gap-8">
-					{/* Course Info */}
-					<div className="lg:col-span-2 space-y-6">
-						{/* Course Header */}
-						<div className="space-y-4">
-							<div className="flex items-center gap-2 text-sm text-muted-foreground">
-								<Link
-									href="/courses"
-									className="hover:text-foreground"
-								>
-									Courses
-								</Link>
-								<ChevronRight className="h-4 w-4" />
-								<span>{course.title}</span>
-							</div>
-
-							<div className="space-y-4">
-								<div className="relative aspect-video overflow-hidden rounded-lg border-1 border-gray-200/10">
-									<img
-										src={
-											course.thumbnail ||
-											"/placeholder.svg"
-										}
-										alt={course.title}
-										className="w-full h-64 object-cover"
-									/>
-									<div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-										<Button
-											size="lg"
-											className="bg-[#A6DAFF] hover:bg-[#A6DAFF]/90 text-black"
-										>
-											<Play className="h-5 w-5 mr-2" />
-											Start Learning
-										</Button>
-									</div>
-								</div>
-
-								<div className="space-y-2">
-									<div className="flex items-center gap-2">
-										<div className="flex items-center gap-4 text-sm text-muted-foreground">
-											<div className="flex items-center gap-1">
-												<BookOpen className="h-4 w-4" />
-												<span>
-													{course.totalLessons}{" "}
-													lessons
-												</span>
-											</div>
-											<div className="flex items-center gap-1">
-												<Clock className="h-4 w-4" />
-												<span>{course.duration}</span>
-											</div>
-										</div>
-									</div>
-
-									<h1 className="text-3xl font-bold text-foreground mt-5">
-										{course.title}
-									</h1>
-
-									<p className="text-muted-foreground leading-relaxed">
-										{course.description}
-									</p>
-								</div>
-							</div>
-						</div>
-
-						{/* Progress Overview */}
-						<Card className="border-1 border-gray-200/50">
-							<CardHeader>
-								<CardTitle className="text-lg">
-									Your Progress
-								</CardTitle>
-							</CardHeader>
-							<CardContent className="space-y-4">
+				<div className="grid gap-8 lg:grid-cols-3">
+					{/* LEFT: Enhanced Curriculum Section */}
+					<section className="lg:col-span-2">
+						<Card className="border-0  shadow-lg   backdrop-blur-sm gap-0">
+							<CardHeader className="border-b border-border/50">
 								<div className="flex items-center justify-between">
-									<span className="text-sm text-muted-foreground">
-										{completedLessons} of{" "}
-										{course.totalLessons} lessons completed
-									</span>
-									<span className="font-medium">
-										{progressPercentage}%
-									</span>
+									<CardTitle className="text-3xl font-semibold text-foreground">
+										Course Curriculum
+									</CardTitle>
+									<Badge
+										variant="secondary"
+										className="text-lg"
+									>
+										{totalLessons} Lessons
+									</Badge>
 								</div>
-								<Progress
-									value={progressPercentage}
-									className="h-2"
-								/>
-							</CardContent>
-						</Card>
-					</div>
-
-					{/* Lessons Sidebar */}
-					<div className="space-y-4">
-						<Card className="border-1 border-gray-200/10">
-							<CardHeader>
-								<CardTitle className="text-lg">
-									Course Curriculum
-								</CardTitle>
 							</CardHeader>
 							<CardContent className="p-0">
-								<div className="space-y-1">
-									{course.lessons.map((lesson, index) => (
-										<Link
+								<div className="">
+									{lessonsView.map((lesson, index) => (
+										<div
 											key={lesson.id}
-											href={`/courses/${course.id}/lessons/${lesson.id}`}
-											className="block"
+											className={`
+												group relative  border transition-all duration-200 ease-in-out
+												${
+													lesson.completed
+														? "bg-green-50 border-green-200 hover:bg-green-100 dark:bg-green-900/50 dark:border-green-800 dark:hover:bg-green-900/40"
+														: "bg-card border-border hover:bg-muted/50 hover:border-border/80"
+												}
+												hover:shadow-md  cursor-pointer
+											`}
 										>
-											<div className="flex items-center gap-3 p-4 hover:bg-accent/50 transition-colors border-b border-border/50 last:border-b-0">
-												<div className="flex-shrink-0">
-													{lesson.completed ? (
-														<CheckCircle className="h-5 w-5 text-green-500" />
-													) : (
-														<Circle className="h-5 w-5 text-muted-foreground" />
-													)}
-												</div>
-
-												<div className="flex-1 min-w-0">
-													<div className="flex items-center gap-2 mb-1">
-														<span className="text-xs text-muted-foreground font-medium">
+											<div className="flex items-center justify-between p-4">
+												<div className="flex items-center gap-4 min-w-0 flex-1">
+													<div className="flex items-center gap-3">
+														{lesson.completed ? (
+															<CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+														) : (
+															<Circle className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
+														)}
+														<span
+															className={`
+															text-sm font-medium w-8 text-center
+															${
+																lesson.completed
+																	? "text-green-700 dark:text-green-300"
+																	: "text-muted-foreground"
+															}
+														`}
+														>
 															{String(
 																index + 1
 															).padStart(2, "0")}
 															.
 														</span>
+													</div>
+
+													<div className="flex-shrink-0">
 														{lesson.type ===
 														"video" ? (
-															<Video className="h-3 w-3 text-muted-foreground" />
+															<Play
+																className={`h-4 w-4 ${
+																	lesson.completed
+																		? "text-green-600 dark:text-green-400"
+																		: "text-muted-foreground group-hover:text-primary"
+																}`}
+															/>
 														) : (
-															<FileText className="h-3 w-3 text-muted-foreground" />
+															<FileText
+																className={`h-4 w-4 ${
+																	lesson.completed
+																		? "text-green-600 dark:text-green-400"
+																		: "text-muted-foreground group-hover:text-primary"
+																}`}
+															/>
 														)}
 													</div>
-													<h4 className="font-medium text-sm leading-tight mb-1">
-														{lesson.title}
-													</h4>
-													<p className="text-xs text-muted-foreground line-clamp-2">
-														{lesson.description}
-													</p>
-													<div className="flex items-center gap-2 mt-2">
-														<Clock className="h-3 w-3 text-muted-foreground" />
-														<span className="text-xs text-muted-foreground">
-															{lesson.duration}
-														</span>
+
+													<div className="min-w-0 flex-1">
+														<h3
+															className={`
+															font-medium text-xl leading-tight mb-1
+															${
+																lesson.completed
+																	? "text-green-800 dark:text-green-200"
+																	: "text-foreground group-hover:text-primary"
+															}
+														`}
+														>
+															{lesson.title}
+														</h3>
 													</div>
 												</div>
+
+												<Link
+													href={`/courses/${course.id}/lessons/${lesson.id}`}
+													className="flex-shrink-0"
+												>
+													<Button
+														size="sm"
+														className={`
+															min-w-20 transition-all duration-200 py-6
+															${
+																lesson.completed
+																	? "bg-green-900/20 text-green-800 hover:bg-green-900/30 dark:bg-green-500/20 dark:text-green-300 dark:hover:bg-green-300/30"
+																	: "bg-primary hover:bg-primary/90 group-hover:shadow-md"
+															}
+														`}
+													>
+														{lesson.completed
+															? "Review"
+															: "Start"}
+													</Button>
+												</Link>
 											</div>
-										</Link>
+										</div>
 									))}
 								</div>
 							</CardContent>
 						</Card>
-					</div>
+					</section>
+
+					{/* RIGHT: Enhanced Progress + Overview */}
+					<aside className="lg:col-span-1 space-y-6 lg:sticky lg:top-8 self-start">
+						<Card className="overflow-hidden border-0 shadow-lg  backdrop-blur-sm ">
+							{course.thumbnail && (
+								<div className="relative overflow-hidden">
+									<Image
+										src={
+											course.thumbnail ||
+											"/placeholder.svg"
+										}
+										alt={course.title}
+										width={320}
+										height={120}
+										className="w-full h-40 object-cover transition-transform duration-300 hover:scale-105"
+									/>
+									<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+								</div>
+							)}
+							<CardContent className="pt-6 space-y-6">
+								<h1 className="text-xl font-bold leading-tight text-balance">
+									{course.title}
+								</h1>
+
+								<div className="flex items-center gap-3 text-sm text-muted-foreground">
+									<BookOpen className="h-4 w-4" />
+									<span className="font-medium">
+										{totalLessons} lessons
+									</span>
+								</div>
+
+								<div className="space-y-3">
+									<div className="flex items-center justify-between text-sm">
+										<span className="text-muted-foreground font-medium">
+											Progress
+										</span>
+										<span className="font-bold text-primary">
+											{completed}/{totalLessons} completed
+										</span>
+									</div>
+									<div className="space-y-2">
+										<Progress
+											value={pct}
+											className="h-3 bg-muted"
+										/>
+										<p className="text-center text-lg font-bold text-primary">
+											{pct}% Complete
+										</p>
+									</div>
+								</div>
+
+								<Link
+									href={`/courses/${course.id}/lessons/${firstIncomplete.id}`}
+								>
+									<Button className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-200">
+										Continue Learning
+										<ChevronRight className="ml-2 h-5 w-5" />
+									</Button>
+								</Link>
+							</CardContent>
+						</Card>
+
+						<Card className="border-0 shadow-lg bg-card/50 backdrop-blur-sm">
+							<CardHeader className="pb-4">
+								<CardTitle className="text-base font-semibold">
+									About This Course
+								</CardTitle>
+							</CardHeader>
+							<CardContent className="text-sm text-muted-foreground leading-relaxed">
+								{course.description}
+							</CardContent>
+						</Card>
+					</aside>
 				</div>
 			</main>
 		</div>
