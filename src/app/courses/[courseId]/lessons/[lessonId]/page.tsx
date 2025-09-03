@@ -95,7 +95,7 @@ export default function LessonPage({ params }: LessonPageProps) {
 										<div className="aspect-video relative">
 											{/* For YouTube: swap <img> with an <iframe> when you’re ready */}
 											<iframe
-												src={`${lesson.content.videoUrl}?controls=1&autoplay=1&loop=1&mute=1&VIDEO_ID&modestbranding=1&rel=0`}
+												src={`${lesson.content.videoUrl}?controls=1&autoplay=1&loop=1&mute=0&VIDEO_ID&modestbranding=1&rel=0`}
 												title={lesson.title}
 												className="w-full h-full"
 												allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
