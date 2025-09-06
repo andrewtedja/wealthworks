@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -11,39 +13,55 @@ import {
 	FileText,
 } from "lucide-react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import LoggedInNavbar from "@/components/_layouts/dashboard-navbar";
-import { dummyCourse } from "@/constants/dummy";
 import Image from "next/image";
+import { use, useEffect, useState } from "react";
 
-export default async function CourseDetailPage({
+import type Lesson from "@/types/lesson";
+import type Course from "@/types/course";
+
+export default function CourseDetailPage({
 	params,
 }: {
 	params: Promise<{ courseId: string }>;
 }) {
-	const { courseId } = await params;
+	const { courseId } = use(params);
 
-	const course = dummyCourse.find((c) => c.id === courseId);
-	if (!course) notFound();
+	const [course, setCourse] = useState<Course | null>(null);
+	const [lessons, setLessons] = useState<Lesson[]>([]);
 
-	const lessonsView = [...(course._lessons ?? [])]
-		.sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))
-		.map((l) => ({
-			id: l.id,
-			title: l.title,
-			description: l.description ?? "",
-			// icons expect "video" or "text"; treat pdf like "text" for now
-			type: l.content_type === "text" ? "text" : "video",
-			completed: !!l.completed,
-		}));
+	// LOAD COURSE
+	useEffect(() => {
+		if (!courseId) return;
+		const fetchCourse = async () => {
+			const res = await fetch(`/api/courses/${courseId}`);
+			const data = await res.json();
+			setCourse(data);
+		};
+		fetchCourse();
+	}, [courseId]);
 
-	const totalLessons = lessonsView.length;
+	// LOAD LESSONS
+	useEffect(() => {
+		const fetchLessons = async () => {
+			const res = await fetch(`/api/courses/${courseId}/lessons`);
+			const data = await res.json();
+			setLessons(data);
+		};
+		fetchLessons();
+	}, [courseId]);
 
-	const completed = lessonsView.filter((l) => l.completed).length;
+	const sortedLessons = [...lessons].sort(
+		(a, b) => (a.order_index ?? 0) - (b.order_index ?? 0)
+	);
+
+	const totalLessons = sortedLessons.length;
+
+	const completed = sortedLessons.filter((l) => l.completed).length;
 
 	const pct = totalLessons ? Math.round((completed / totalLessons) * 100) : 0;
 	const firstIncomplete =
-		lessonsView.find((l) => !l.completed) ?? lessonsView[0];
+		sortedLessons.find((l) => !l.completed) ?? sortedLessons[0];
 
 	return (
 		<div className="min-h-screen bg-background">
@@ -69,7 +87,7 @@ export default async function CourseDetailPage({
 							</CardHeader>
 							<CardContent className="p-0">
 								<div className="">
-									{lessonsView.map((lesson, index) => (
+									{sortedLessons.map((lesson, index) => (
 										<div
 											key={lesson.id}
 											className={`
@@ -108,7 +126,7 @@ export default async function CourseDetailPage({
 													</div>
 
 													<div className="flex-shrink-0">
-														{lesson.type ===
+														{lesson.content_type ===
 														"video" ? (
 															<Play
 																className={`h-4 w-4 ${
@@ -145,7 +163,7 @@ export default async function CourseDetailPage({
 												</div>
 
 												<Link
-													href={`/courses/${course.id}/lessons/${lesson.id}`}
+													href={`/courses/${courseId}/lessons/${lesson.id}`}
 													className="flex-shrink-0"
 												>
 													<Button
@@ -175,11 +193,11 @@ export default async function CourseDetailPage({
 					{/* RIGHT: Enhanced Progress + Overview */}
 					<aside className="lg:col-span-1 space-y-6 lg:sticky lg:top-8 self-start">
 						<Card className="overflow-hidden border-0 shadow-lg  backdrop-blur-sm ">
-							{course.thumbnail && (
+							{course?.thumbnail_url && (
 								<div className="relative overflow-hidden">
 									<Image
 										src={
-											course.thumbnail ||
+											course.thumbnail_url ||
 											"/placeholder.svg"
 										}
 										alt={course.title}
@@ -192,7 +210,7 @@ export default async function CourseDetailPage({
 							)}
 							<CardContent className="pt-6 space-y-6">
 								<h1 className="text-xl font-bold leading-tight text-balance">
-									{course.title}
+									{course?.title}
 								</h1>
 
 								<div className="flex items-center gap-3 text-sm text-muted-foreground">
@@ -222,14 +240,16 @@ export default async function CourseDetailPage({
 									</div>
 								</div>
 
-								<Link
-									href={`/courses/${course.id}/lessons/${firstIncomplete.id}`}
-								>
-									<Button className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-200">
-										Continue Learning
-										<ChevronRight className="ml-2 h-5 w-5" />
-									</Button>
-								</Link>
+								{firstIncomplete && course && (
+									<Link
+										href={`/courses/${course?.id}/lessons/${firstIncomplete.id}`}
+									>
+										<Button className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-200">
+											Continue Learning
+											<ChevronRight className="ml-2 h-5 w-5" />
+										</Button>
+									</Link>
+								)}
 							</CardContent>
 						</Card>
 
@@ -240,7 +260,7 @@ export default async function CourseDetailPage({
 								</CardTitle>
 							</CardHeader>
 							<CardContent className="text-sm text-muted-foreground leading-relaxed">
-								{course.description}
+								{course?.description}
 							</CardContent>
 						</Card>
 					</aside>

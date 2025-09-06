@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import LogoFull from "../logo/logo-full";
 import { signout } from "@/lib/auth-actions";
+import Link from "next/link";
 
 export default function LoggedInNavbar() {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -21,6 +22,24 @@ export default function LoggedInNavbar() {
 	const handleSignOut = async () => {
 		await signout();
 	};
+
+	const dashboardNavLinks = [
+		{
+			name: "Modul",
+			href: "/courses",
+			icon: Gem,
+		},
+		{
+			name: "News",
+			href: "/news",
+			icon: Crown,
+		},
+		{
+			name: "Help",
+			href: "/help",
+			icon: User,
+		},
+	];
 
 	useEffect(() => {
 		const root = document.documentElement;
@@ -98,38 +117,21 @@ export default function LoggedInNavbar() {
 				{/* Navigation Links and User Dropdown */}
 				<div className="flex items-center space-x-6">
 					{/* Nav Links */}
-					<div className="flex items-center space-x-6">
-						<a
-							href="#"
-							className={`font-medium text-sm ${
-								isDarkMode
-									? "text-gray-300 hover:text-blue-400"
-									: "text-gray-700 hover:text-blue-600"
-							}`}
-						>
-							Modul
-						</a>
-						<a
-							href="#"
-							className={`font-medium text-sm ${
-								isDarkMode
-									? "text-gray-300 hover:text-blue-400"
-									: "text-gray-700 hover:text-blue-600"
-							}`}
-						>
-							News
-						</a>
-						<a
-							href="#"
-							className={`font-medium text-sm ${
-								isDarkMode
-									? "text-gray-300 hover:text-blue-400"
-									: "text-gray-700 hover:text-blue-600"
-							}`}
-						>
-							Help
-						</a>
-					</div>
+					<ul className="flex items-center space-x-6">
+						{dashboardNavLinks.map((link) => (
+							<Link href={link.href} key={link.name}>
+								<li
+									className={`font-medium text-sm ${
+										isDarkMode
+											? "text-gray-300 hover:text-blue-400"
+											: "text-gray-700 hover:text-blue-600"
+									}`}
+								>
+									{link.name}
+								</li>
+							</Link>
+						))}
+					</ul>
 
 					{/* User Dropdown */}
 					<div className="relative">

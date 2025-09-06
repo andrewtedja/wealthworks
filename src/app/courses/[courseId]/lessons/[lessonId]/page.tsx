@@ -11,51 +11,57 @@ import {
 	FileText,
 } from "lucide-react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { use, useMemo, useState } from "react";
-import { dummyCourse } from "@/constants/dummy";
+import { use, useEffect, useState } from "react";
 import LoggedInNavbar from "@/components/_layouts/dashboard-navbar";
+import type Lesson from "@/types/lesson";
 
 interface LessonPageProps {
-	params: Promise<{ courseId: string; lessonId: string }>; // <-- params is a Promise now
+	params: Promise<{ courseId: string; lessonId: string }>;
 }
 export default function LessonPage({ params }: LessonPageProps) {
 	const { courseId, lessonId } = use(params);
 
-	// ---- FIND COURSE FROM DUMMY (array) ----
-	const course = useMemo(
-		() => dummyCourse.find((c) => c.id === courseId),
-		[courseId]
-	);
-	if (!course) notFound();
+	const [lesson, setLesson] = useState<Lesson | null>(null);
+	const [lessons, setLessons] = useState<Lesson[]>([]);
+	const [loadError, setLoadError] = useState<string | null>(null);
 
-	// ---- BUILD LESSONS (sorted by order_index) & MAP TO VIEW FIELDS ----
-	const lessons = useMemo(() => {
-		const raw = [...(course._lessons ?? [])].sort(
-			(a, b) => (a.order_index ?? 0) - (b.order_index ?? 0)
-		);
-		return raw.map((l) => ({
-			// keep raw for routing but add view-friendly fields
-			raw: l,
-			id: l.id,
-			title: l.title,
-			description: l.description ?? "",
-			// map content_type -> type used by UI
-			type: l.content_type === "text" ? "text" : "video", // treat 'pdf' later
-			// simple content mapping for UI
-			content:
-				l.content_type === "video"
-					? { videoUrl: l.content_url ?? "" }
-					: l.content_type === "text"
-					? { text: l.content_text ?? "" }
-					: { videoUrl: l.content_url ?? "" }, // TODO: PDF viewer
-			completed: !!l.completed,
-		}));
-	}, [course]);
+	// Fetch single lesson
+	useEffect(() => {
+		const fetchLesson = async () => {
+			try {
+				const res = await fetch(`/api/lessons/${lessonId}`);
+				if (!res.ok) {
+					setLoadError("Lesson not found");
+					setLesson(null);
+					return;
+				}
+				const data = await res.json();
+				setLesson(data);
+			} catch {
+				setLoadError("Failed to load lesson");
+			}
+		};
+		fetchLesson();
+	}, [lessonId]);
+
+	// Fetch lessons list for sidebar
+	useEffect(() => {
+		const fetchLessons = async () => {
+			const res = await fetch(`/api/courses/${courseId}/lessons`);
+			if (!res.ok) return;
+			const data = await res.json();
+			setLessons(data);
+		};
+		fetchLessons();
+	}, [courseId]);
 
 	// ---- PICK CURRENT / PREV / NEXT ----
-	const lesson = lessons.find((l) => l.id === lessonId);
-	if (!lesson) notFound();
+	if (loadError)
+		return (
+			<div className="p-8 text-sm text-muted-foreground">{loadError}</div>
+		);
+
+	if (!lesson) return <div className="p-8">Loading...</div>;
 
 	const idx = lessons.findIndex((l) => l.id === lesson.id);
 	const previousLesson = idx > 0 ? lessons[idx - 1] : null;
@@ -78,10 +84,10 @@ export default function LessonPage({ params }: LessonPageProps) {
 							</Link>
 							<ChevronRight className="h-4 w-4" />
 							<Link
-								href={`/courses/${course.id}`}
+								href={`/courses/${courseId}`}
 								className="hover:text-foreground"
 							>
-								{course.title}
+								{lesson.course?.title}
 							</Link>
 							<ChevronRight className="h-4 w-4" />
 							<span>{lesson.title}</span>
@@ -90,12 +96,12 @@ export default function LessonPage({ params }: LessonPageProps) {
 						{/* Video/Text Content */}
 						<Card className="p-0 border-3 border-white/70">
 							<CardContent className="p-0">
-								{lesson.type === "video" ? (
+								{lesson.content_type === "video" ? (
 									<div className="relative bg-black rounded-lg overflow-hidden">
 										<div className="aspect-video relative">
 											{/* For YouTube: swap <img> with an <iframe> when you’re ready */}
 											<iframe
-												src={`${lesson.content.videoUrl}?controls=1&autoplay=1&loop=1&mute=0&VIDEO_ID&modestbranding=1&rel=0`}
+												src={`${lesson.content_url}?controls=1&autoplay=1&loop=1&mute=0&VIDEO_ID&modestbranding=1&rel=0`}
 												title={lesson.title}
 												className="w-full h-full"
 												allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -106,7 +112,7 @@ export default function LessonPage({ params }: LessonPageProps) {
 								) : (
 									<div className="p-8">
 										<div className="prose prose-slate dark:prose-invert max-w-none whitespace-pre-wrap">
-											{lesson.content.text}
+											{lesson.content_text || ""}
 										</div>
 									</div>
 								)}
@@ -126,7 +132,7 @@ export default function LessonPage({ params }: LessonPageProps) {
 										</p>
 									</div>
 									<div className="flex items-center gap-2 text-sm text-muted-foreground">
-										{lesson.type === "video" ? (
+										{lesson.content_type === "video" ? (
 											<Video className="h-4 w-4" />
 										) : (
 											<FileText className="h-4 w-4" />
@@ -140,7 +146,7 @@ export default function LessonPage({ params }: LessonPageProps) {
 						<div className="flex items-center justify-between">
 							{previousLesson ? (
 								<Link
-									href={`/courses/${course.id}/lessons/${previousLesson.id}`}
+									href={`/courses/${courseId}/lessons/${previousLesson.id}`}
 								>
 									<Button
 										variant="outline"
@@ -161,7 +167,7 @@ export default function LessonPage({ params }: LessonPageProps) {
 
 							{nextLesson ? (
 								<Link
-									href={`/courses/${course.id}/lessons/${nextLesson.id}`}
+									href={`/courses/${courseId}/lessons/${nextLesson.id}`}
 								>
 									<Button
 										variant="outline"
@@ -190,7 +196,7 @@ export default function LessonPage({ params }: LessonPageProps) {
 									{lessons.map((l, index) => (
 										<Link
 											key={l.id}
-											href={`/courses/${course.id}/lessons/${l.id}`}
+											href={`/courses/${courseId}/lessons/${l.id}`}
 											className="block"
 										>
 											<div
@@ -216,7 +222,8 @@ export default function LessonPage({ params }: LessonPageProps) {
 															).padStart(2, "0")}
 															.
 														</span>
-														{l.type === "video" ? (
+														{l.content_type ===
+														"video" ? (
 															<Video className="h-3 w-3 text-muted-foreground" />
 														) : (
 															<FileText className="h-3 w-3 text-muted-foreground" />
