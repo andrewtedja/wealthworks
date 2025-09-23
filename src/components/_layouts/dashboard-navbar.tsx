@@ -13,6 +13,8 @@ import {
 import LogoFull from "../logo/logo-full";
 import { signout } from "@/lib/auth-actions";
 import Link from "next/link";
+import { createClient } from "@/utils/supabase/client";
+import type { User as UserType } from "@/types/user";
 
 export default function LoggedInNavbar() {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -46,6 +48,37 @@ export default function LoggedInNavbar() {
 		const init = root.classList.contains("dark");
 		setIsDarkMode(init);
 	}, []);
+
+	const supabase = createClient();
+	// Get current user
+	const [user, setUser] = useState<UserType | null>(null);
+	useEffect(() => {
+		// langsung async di dalam useEffect
+		(async () => {
+			const {
+				data: { user },
+				error,
+			} = await supabase.auth.getUser();
+
+			if (error || !user) {
+				setUser(null);
+				return;
+			}
+
+			const { data: profile } = await supabase
+				.from("profiles")
+				.select("username, phone")
+				.eq("id", user.id)
+				.single();
+
+			setUser({
+				id: user.id,
+				email: user.email!,
+				username: profile?.username ?? "",
+				phone: profile?.phone ?? "",
+			});
+		})();
+	}, [supabase]);
 
 	// Helper to apply theme everywhere + persist
 	const applyTheme = (dark: boolean) => {
@@ -157,7 +190,7 @@ export default function LoggedInNavbar() {
 								/>
 							</div>
 							<span className="font-medium text-sm">
-								Gabung The Ambatukam
+								{user?.username}
 							</span>
 							<ChevronDown className="h-4 w-4" />
 						</button>
@@ -172,7 +205,7 @@ export default function LoggedInNavbar() {
 											<Gem className="h-4 w-4 text-white" />
 										</div>
 										<span className="text-white font-semibold text-sm">
-											The Ambatukam
+											{user?.username}
 										</span>
 									</div>
 									<div className="text-gray-400 text-xs mb-2">

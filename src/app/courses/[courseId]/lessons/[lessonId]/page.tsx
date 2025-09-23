@@ -111,6 +111,9 @@ export default function LessonPage({ params }: LessonPageProps) {
 									</div>
 								) : (
 									<div className="p-8">
+										<CardTitle className="text-3xl mb-10">
+											{lesson.title}
+										</CardTitle>
 										<div className="prose prose-slate dark:prose-invert max-w-none whitespace-pre-wrap">
 											{lesson.content_text || ""}
 										</div>

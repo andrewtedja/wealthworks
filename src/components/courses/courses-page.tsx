@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 // import { Progress } from "@/components/ui/progress";
-import { BookOpen, Play } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import Link from "next/link";
 import LoggedInNavbar from "@/components/_layouts/dashboard-navbar";
 import Image from "next/image";
@@ -99,8 +99,8 @@ export default function CoursesPage() {
 												activeTopic &&
 												activeTopic !== "all" &&
 												activeTopic.id === t.id
-													? "bg-accent border-accent"
-													: "border-border/50 hover:bg-accent/50"
+													? "bg-accent border-accent text-white"
+													: "border-border/50 hover:bg-accent/10"
 											}`}
 										>
 											{t.name}
@@ -149,7 +149,7 @@ export default function CoursesPage() {
 											variant="secondary"
 											className="bg-background/80 backdrop-blur-sm"
 										>
-											4 (Dummy) Lessons
+											1 Lesson
 										</Badge>
 									</div>
 
@@ -220,7 +220,7 @@ export default function CoursesPage() {
 								key={course.id}
 								href={`/courses/${course.id}`}
 							>
-								<Card className="group  transition-all duration-300 cursor-pointer border-0 border-border/50 hover:border-[#A6DAFF]/50 dark:hover:border-[#A6DAFF]/30 hover:shadow-xl  lg:h-128 py-0 gap-0 hover:scale-103">
+								<Card className="group  transition-all duration-300 cursor-pointer border-0 border-border/50 hover:border-[#A6DAFF]/50 dark:hover:border-[#A6DAFF]/30 hover:shadow-xl  lg:h-112 py-0 gap-0 hover:scale-103">
 									<CardHeader className="p-0">
 										<div className="relative overflow-hidden rounded-lg">
 											<Image
@@ -257,7 +257,7 @@ export default function CoursesPage() {
 										<div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
 											<div className="flex items-center gap-1">
 												<BookOpen className="h-3 w-3" />
-												<span>4 (Dummy) lessons</span>
+												<span>1 lesson</span>
 											</div>
 										</div>
 

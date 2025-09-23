@@ -118,6 +118,33 @@ export async function resendVerification(email: string) {
 
 	return { success: true };
 }
+
+export async function getCurrentUser() {
+	const supabase = await createClient();
+
+	// ambil user auth
+	const {
+		data: { user },
+		error: authError,
+	} = await supabase.auth.getUser();
+
+	if (authError || !user) return null;
+
+	// ambil profile custom
+	const { data: profile, error: profileError } = await supabase
+		.from("profiles")
+		.select("username, phone")
+		.eq("id", user.id)
+		.single();
+
+	if (profileError) return { ...user, profile: null };
+
+	return {
+		...user, // data dari auth.users
+		...profile, // gabung field dari profiles
+	};
+}
+
 // export async function signInWithGoogle() {
 // 	const supabase = await createClient();
 // 	const { data, error } = await supabase.auth.signInWithOAuth({
