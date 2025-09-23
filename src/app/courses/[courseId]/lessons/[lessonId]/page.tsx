@@ -11,15 +11,15 @@ import {
 	FileText,
 } from "lucide-react";
 import Link from "next/link";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import LoggedInNavbar from "@/components/_layouts/dashboard-navbar";
 import type Lesson from "@/types/lesson";
 
 interface LessonPageProps {
-	params: Promise<{ courseId: string; lessonId: string }>;
+	params: { courseId: string; lessonId: string };
 }
 export default function LessonPage({ params }: LessonPageProps) {
-	const { courseId, lessonId } = use(params);
+	const { courseId, lessonId } = params;
 
 	const [lesson, setLesson] = useState<Lesson | null>(null);
 	const [lessons, setLessons] = useState<Lesson[]>([]);

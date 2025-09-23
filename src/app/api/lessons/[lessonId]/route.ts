@@ -6,7 +6,7 @@ export async function GET(
 	request: NextRequest,
 	{ params }: { params: { lessonId: string } }
 ) {
-	const { lessonId } = await params;
+	const { lessonId } = params;
 
 	const { data, error } = await supabase
 		.from("lessons")

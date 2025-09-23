@@ -3,9 +3,9 @@ import { supabase } from "@/lib/supabase";
 // GET /api/courses/:id
 export async function GET(
 	req: Request,
-	{ params }: { params: Promise<{ id: string }> }
+	{ params }: { params: { id: string } }
 ) {
-	const { id } = await params; // ✅ ambil dari path, bukan query
+	const { id } = params; // ✅ ambil dari path, bukan query
 
 	if (!id || id === "null") {
 		return new Response(JSON.stringify({ error: "Invalid courseId" }), {

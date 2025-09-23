@@ -15,7 +15,7 @@ import {
 import Link from "next/link";
 import LoggedInNavbar from "@/components/_layouts/dashboard-navbar";
 import Image from "next/image";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import type Lesson from "@/types/lesson";
 import type Course from "@/types/course";
@@ -23,9 +23,9 @@ import type Course from "@/types/course";
 export default function CourseDetailPage({
 	params,
 }: {
-	params: Promise<{ courseId: string }>;
+	params: { courseId: string };
 }) {
-	const { courseId } = use(params);
+	const { courseId } = params;
 
 	const [course, setCourse] = useState<Course | null>(null);
 	const [lessons, setLessons] = useState<Lesson[]>([]);
