@@ -14,7 +14,7 @@ const faqData = [
 	},
 	{
 		question: "Kenapa harus gabung WealthWorks",
-		answer: `Bergabung dengan komunitas di Wealthworksitu bikin kita nggak merasa sendirian dalam mengelola keuangan. Di sini, kamu bisa ngobrol bareng orang-orang yang punya tujuan yang sama, saling berbagi pengalaman, dan tentu aja saling menyemangati. Ada banyak orang dengan latar belakang yang berbeda, jadi kamu bisa dapet banyak perspektif baru. \n\n Selain itu, komunitas ini juga jadi tempat yang oke buat belajar lebih dalam, karena banyak yang siap berbagi tips dan trik tentang cara atur keuangan, investasi, atau hal-hal lain yang terkait. Kalau ada yang bingung atau butuh bimbingan, pasti ada yang siap bantu, jadi kamu nggak perlu merasa bingung sendirian. Ini jadi semacam “support system” yang bikin perjalanan keuangan kamu lebih ringan dan seru!`,
+		answer: `Bergabung dengan komunitas di Wealthworks itu bikin kita nggak merasa sendirian dalam mengelola keuangan. Di sini, kamu bisa ngobrol bareng orang-orang yang punya tujuan yang sama, saling berbagi pengalaman, dan tentu aja saling menyemangati. Ada banyak orang dengan latar belakang yang berbeda, jadi kamu bisa dapet banyak perspektif baru. \n\n Selain itu, komunitas ini juga jadi tempat yang oke buat belajar lebih dalam, karena banyak yang siap berbagi tips dan trik tentang cara atur keuangan, investasi, atau hal-hal lain yang terkait. Kalau ada yang bingung atau butuh bimbingan, pasti ada yang siap bantu, jadi kamu nggak perlu merasa bingung sendirian. WealthWorks jadi semacam “support system” yang bikin perjalanan keuangan kamu lebih ringan dan seru!`,
 	},
 	{
 		question: "Apakah data saya aman di WealthWorks?",

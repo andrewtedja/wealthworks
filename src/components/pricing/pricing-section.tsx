@@ -47,7 +47,7 @@ export function PricingSection() {
 	return (
 		<section
 			id="pricing"
-			className="relative min-h-screen  text-white py-40 px-6 bg-[#06070a] overflow-hidden"
+			className="relative min-h-screen  text-white py-40 px-6 bg-[#08080a] overflow-hidden"
 		>
 			<div className="absolute top-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
 				<div className="w-[500px] h-[500px] bg-gradient-to-t from-indigo-500/30 via-gray-300/12 to-transparent rounded-full blur-3xl"></div>

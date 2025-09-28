@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function LogoFull({ size = 36 }: { size?: number }) {
 	return (
-		<Link href="/" className="flex items-center gap-2">
+		<Link href="#" className="flex items-center gap-2">
 			<Image
 				src="/images/logo/logo-full.avif" // or "/logo.avif", adjust as needed
 				alt="WealthWorks Logo"
