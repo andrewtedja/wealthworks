@@ -4,7 +4,11 @@ import { supabase } from "@/lib/supabase";
 export async function GET() {
 	const { data, error } = await supabase.from("topics").select("*");
 	if (error) throw new Error(error.message);
-	return new Response(JSON.stringify(data));
+	return new Response(JSON.stringify(data), {
+		headers: {
+			"Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+		},
+	});
 }
 
 export async function POST(req: Request) {
