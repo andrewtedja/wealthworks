@@ -3,10 +3,10 @@ import { supabase } from "@/lib/supabase";
 // GET /api/courses/:id
 export async function GET(
 	req: Request,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
-	const { id } = params; // ✅ ambil dari path, bukan query
-
+	const resolvedParams = await params;
+	const { id } = resolvedParams;
 	if (!id || id === "null") {
 		return new Response(JSON.stringify({ error: "Invalid courseId" }), {
 			status: 400,

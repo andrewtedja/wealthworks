@@ -3,9 +3,10 @@ import { supabase } from "@/lib/supabase";
 
 export async function GET(
 	request: NextRequest,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
-	const { id } = params;
+	const resolvedParams = await params;
+	const { id } = resolvedParams;
 	if (!id || id === "null") {
 		return NextResponse.json(
 			{ error: "Invalid courseId" },

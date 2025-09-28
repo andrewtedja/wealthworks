@@ -20,15 +20,23 @@ import { useEffect, useState } from "react";
 import type Lesson from "@/types/lesson";
 import type Course from "@/types/course";
 
-export default function CourseDetailPage({
-	params,
-}: {
-	params: { courseId: string };
-}) {
-	const { courseId } = params;
+interface CourseDetailPageProps {
+	params: Promise<{ courseId: string }>;
+}
 
+export default function CourseDetailPage({ params }: CourseDetailPageProps) {
+	const [courseId, setCourseId] = useState<string>("");
 	const [course, setCourse] = useState<Course | null>(null);
 	const [lessons, setLessons] = useState<Lesson[]>([]);
+
+	// Resolve params first
+	useEffect(() => {
+		const resolveParams = async () => {
+			const resolvedParams = await params;
+			setCourseId(resolvedParams.courseId);
+		};
+		resolveParams();
+	}, [params]);
 
 	// LOAD COURSE
 	useEffect(() => {
@@ -43,6 +51,7 @@ export default function CourseDetailPage({
 
 	// LOAD LESSONS
 	useEffect(() => {
+		if (!courseId) return;
 		const fetchLessons = async () => {
 			const res = await fetch(`/api/courses/${courseId}/lessons`);
 			const data = await res.json();
@@ -50,6 +59,11 @@ export default function CourseDetailPage({
 		};
 		fetchLessons();
 	}, [courseId]);
+
+	// Show loading while params are being resolved
+	if (!courseId) {
+		return <div className="p-8">Loading...</div>;
+	}
 
 	const sortedLessons = [...lessons].sort(
 		(a, b) => (a.order_index ?? 0) - (b.order_index ?? 0)

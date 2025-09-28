@@ -4,9 +4,10 @@ import { supabase } from "@/lib/supabase";
 // GET /api/lessons/:lessonId
 export async function GET(
 	request: NextRequest,
-	{ params }: { params: { lessonId: string } }
+	{ params }: { params: Promise<{ lessonId: string }> }
 ) {
-	const { lessonId } = params;
+	const resolvedParams = await params;
+	const { lessonId } = resolvedParams;
 
 	const { data, error } = await supabase
 		.from("lessons")

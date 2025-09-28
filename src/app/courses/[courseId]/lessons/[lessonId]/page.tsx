@@ -16,17 +16,30 @@ import LoggedInNavbar from "@/components/_layouts/dashboard-navbar";
 import type Lesson from "@/types/lesson";
 
 interface LessonPageProps {
-	params: { courseId: string; lessonId: string };
+	params: Promise<{ courseId: string; lessonId: string }>;
 }
-export default function LessonPage({ params }: LessonPageProps) {
-	const { courseId, lessonId } = params;
 
+export default function LessonPage({ params }: LessonPageProps) {
+	const [courseId, setCourseId] = useState<string>("");
+	const [lessonId, setLessonId] = useState<string>("");
 	const [lesson, setLesson] = useState<Lesson | null>(null);
 	const [lessons, setLessons] = useState<Lesson[]>([]);
 	const [loadError, setLoadError] = useState<string | null>(null);
 
+	// Resolve params first
+	useEffect(() => {
+		const resolveParams = async () => {
+			const resolvedParams = await params;
+			setCourseId(resolvedParams.courseId);
+			setLessonId(resolvedParams.lessonId);
+		};
+		resolveParams();
+	}, [params]);
+
 	// Fetch single lesson
 	useEffect(() => {
+		if (!lessonId) return;
+
 		const fetchLesson = async () => {
 			try {
 				const res = await fetch(`/api/lessons/${lessonId}`);
@@ -46,6 +59,8 @@ export default function LessonPage({ params }: LessonPageProps) {
 
 	// Fetch lessons list for sidebar
 	useEffect(() => {
+		if (!courseId) return;
+
 		const fetchLessons = async () => {
 			const res = await fetch(`/api/courses/${courseId}/lessons`);
 			if (!res.ok) return;
@@ -54,6 +69,11 @@ export default function LessonPage({ params }: LessonPageProps) {
 		};
 		fetchLessons();
 	}, [courseId]);
+
+	// Show loading while params are being resolved
+	if (!courseId || !lessonId) {
+		return <div className="p-8">Loading...</div>;
+	}
 
 	// ---- PICK CURRENT / PREV / NEXT ----
 	if (loadError)
@@ -99,7 +119,7 @@ export default function LessonPage({ params }: LessonPageProps) {
 								{lesson.content_type === "video" ? (
 									<div className="relative bg-black rounded-lg overflow-hidden">
 										<div className="aspect-video relative">
-											{/* For YouTube: swap <img> with an <iframe> when you’re ready */}
+											{/* For YouTube: swap <img> with an <iframe> when you're ready */}
 											<iframe
 												src={`${lesson.content_url}?controls=1&autoplay=1&loop=1&mute=0&VIDEO_ID&modestbranding=1&rel=0`}
 												title={lesson.title}
