@@ -17,8 +17,10 @@ import LoggedInNavbar from "@/components/_layouts/dashboard-navbar";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-import type Lesson from "@/types/lesson";
-import type Course from "@/types/course";
+import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
+
+import Loader from "@/components/loading/loader";
 
 interface CourseDetailPageProps {
 	params: Promise<{ courseId: string }>;
@@ -26,8 +28,8 @@ interface CourseDetailPageProps {
 
 export default function CourseDetailPage({ params }: CourseDetailPageProps) {
 	const [courseId, setCourseId] = useState<string>("");
-	const [course, setCourse] = useState<Course | null>(null);
-	const [lessons, setLessons] = useState<Lesson[]>([]);
+	// const [course, setCourse] = useState<Course | null>(null);
+	// const [lessons, setLessons] = useState<Lesson[]>([]);
 
 	// Resolve params first
 	useEffect(() => {
@@ -38,32 +40,33 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
 		resolveParams();
 	}, [params]);
 
-	// LOAD COURSE
-	useEffect(() => {
-		if (!courseId) return;
-		const fetchCourse = async () => {
-			const res = await fetch(`/api/courses/${courseId}`);
-			const data = await res.json();
-			setCourse(data);
-		};
-		fetchCourse();
-	}, [courseId]);
+	// ✅ Use SWR for course data
+	const {
+		data: course,
+		error: courseErr,
+		isLoading: courseLoading,
+	} = useSWR(courseId ? `/api/courses/${courseId}` : null, fetcher, {
+		revalidateOnFocus: false,
+	});
 
-	// LOAD LESSONS
-	useEffect(() => {
-		if (!courseId) return;
-		const fetchLessons = async () => {
-			const res = await fetch(`/api/courses/${courseId}/lessons`);
-			const data = await res.json();
-			setLessons(data);
-		};
-		fetchLessons();
-	}, [courseId]);
+	// ✅ Use SWR for lessons
+	const {
+		data: lessons = [],
+		error: lessonsErr,
+		isLoading: lessonsLoading,
+	} = useSWR(courseId ? `/api/courses/${courseId}/lessons` : null, fetcher, {
+		revalidateOnFocus: false,
+	});
 
-	// Show loading while params are being resolved
-	if (!courseId) {
-		return <div className="p-8">Loading...</div>;
-	}
+	if (!courseId || courseLoading || lessonsLoading)
+		return (
+			<div className="p-8">
+				<Loader />
+			</div>
+		);
+
+	if (courseErr || lessonsErr)
+		return <div className="p-8 text-red-500">Failed to load course</div>;
 
 	const sortedLessons = [...lessons].sort(
 		(a, b) => (a.order_index ?? 0) - (b.order_index ?? 0)

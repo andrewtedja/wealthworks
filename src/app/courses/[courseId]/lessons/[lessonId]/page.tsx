@@ -14,6 +14,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import LoggedInNavbar from "@/components/_layouts/dashboard-navbar";
 import type Lesson from "@/types/lesson";
+import Loader from "@/components/loading/loader";
 
 interface LessonPageProps {
 	params: Promise<{ courseId: string; lessonId: string }>;
@@ -72,7 +73,11 @@ export default function LessonPage({ params }: LessonPageProps) {
 
 	// Show loading while params are being resolved
 	if (!courseId || !lessonId) {
-		return <div className="p-8">Loading...</div>;
+		return (
+			<div className="p-8">
+				<Loader />
+			</div>
+		);
 	}
 
 	// ---- PICK CURRENT / PREV / NEXT ----
@@ -81,7 +86,17 @@ export default function LessonPage({ params }: LessonPageProps) {
 			<div className="p-8 text-sm text-muted-foreground">{loadError}</div>
 		);
 
-	if (!lesson) return <div className="p-8">Loading...</div>;
+	if (!lesson)
+		return (
+			<div className="p-8">
+				<Loader />
+			</div>
+		);
+
+	const getEmbedUrl = (url: string) => {
+		if (!url) return "";
+		return url.replace("watch?v=", "embed/");
+	};
 
 	const idx = lessons.findIndex((l) => l.id === lesson.id);
 	const previousLesson = idx > 0 ? lessons[idx - 1] : null;
@@ -121,7 +136,9 @@ export default function LessonPage({ params }: LessonPageProps) {
 										<div className="aspect-video relative">
 											{/* For YouTube: swap <img> with an <iframe> when you're ready */}
 											<iframe
-												src={`${lesson.content_url}?controls=1&autoplay=1&loop=1&mute=0&VIDEO_ID&modestbranding=1&rel=0`}
+												src={`${getEmbedUrl(
+													lesson.content_url ?? ""
+												)}?controls=1&autoplay=1&loop=1&mute=0&VIDEO_ID&modestbranding=1&rel=0`}
 												title={lesson.title}
 												className="w-full h-full"
 												allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

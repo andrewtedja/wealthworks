@@ -91,11 +91,13 @@ export function PricingSection() {
 				</div>
 
 				{/* Pricing Cards */}
-				<div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+				<div className="grid md:grid-cols-3 gap-7 max-w-6xl mx-auto">
 					{plans.map((plan) => (
 						<Card
 							key={plan.name}
-							className={`relative bg-gradient-to-tr from-[#010205] to-[#141414] border border-gray-700/20  border-t-[#747070] border-b-gray-200/10 border-l-[#363535] border-r-[#383737] backdrop-blur-sm`}
+							className={`relative bg-gradient-to-tr from-[#010205] to-[#141414] border border-gray-700/20  border-t-[#747070] border-b-gray-200/10 border-l-[#363535] border-r-[#383737] backdrop-blur-sm       ${
+								plan.popular ? "shadow-lg scale-105 z-10" : ""
+							}`}
 
 							// ${
 							// 	plan.popular ? "ring-2 ring-yellow-300/50" : ""
@@ -120,8 +122,8 @@ export function PricingSection() {
 									</div>
 
 									{plan.popular && (
-										<Badge className="flex items-center gap-1 bg-[#1f212b] border border-gray-700/50 border-t-[#747070] border-b-gray-200/5 border-l-[#413f3f] border-r-[#747171] rounded-full shadow-md px-2 py-1 text-xs backdrop-blur-sm">
-											<Flame className="w-3 h-3 text-yellow-400" />
+										<Badge className="inline-flex items-center gap-1 bg-gradient-to-br from-amber-500/20 to-orange-600/20 border border-amber-400 rounded-full px-2 py-1 text-xs font-semibold text-amber-100 shadow-[0_0_10px_rgba(251,191,36,0.4)] backdrop-blur-md transition-all duration-200 hover:shadow-[0_0_16px_rgba(251,191,36,0.6)] hover:border-amber-300 cursor-default ml-1">
+											<Flame className="w-3 h-3 text-yellow-400 " />
 											Popular
 										</Badge>
 									)}

@@ -23,7 +23,7 @@ import LogoSmall from "@/components/logo/logo-small";
 
 export default function AuthPage() {
 	return (
-		<Suspense fallback={<div>Loading...</div>}>
+		<Suspense fallback={<Loader />}>
 			<AuthPageContent />
 		</Suspense>
 	);
@@ -31,6 +31,7 @@ export default function AuthPage() {
 
 import { login, signup } from "@/lib/auth-actions";
 import PasswordInput from "@/components/inputs/password-input";
+import Loader from "@/components/loading/loader";
 
 function SubmitButton({ text }: { text: string }) {
 	const { pending } = useFormStatus();
@@ -49,7 +50,7 @@ function SubmitButton({ text }: { text: string }) {
 				className="absolute inset-0 bg-gradient-to-r from-[#A6DAFF]/10 to-blue-400/10 
                       opacity-0 hover:opacity-100 transition-opacity duration-300"
 			/>
-			<span className="relative">{pending ? "Loading..." : text}</span>
+			<span className="relative">{pending ? <Loader /> : text}</span>
 		</Button>
 	);
 }

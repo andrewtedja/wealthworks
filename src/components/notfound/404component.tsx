@@ -37,7 +37,7 @@ export default function NotFound() {
 						Halaman yang Anda cari tidak dapat ditemukan.
 					</p>
 
-					<Link href="/">
+					<Link href="/courses">
 						<motion.button
 							className="inline-flex items-center gap-3 bg-gray-900/80 hover:bg-gray-800/80 border border-gray-700/50 px-6 py-3 rounded-lg text-white font-medium transition-all duration-200 backdrop-blur-sm"
 							whileHover={{ scale: 1.02 }}

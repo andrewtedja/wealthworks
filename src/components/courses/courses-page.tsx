@@ -1,74 +1,60 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import useSWR from "swr";
+import { useState } from "react";
+import { fetcher } from "@/lib/fetcher";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-// import { Progress } from "@/components/ui/progress";
 import { BookOpen } from "lucide-react";
 import Link from "next/link";
 import LoggedInNavbar from "@/components/_layouts/dashboard-navbar";
 import Image from "next/image";
 import type Course from "@/types/course";
 import type Topic from "@/types/topic";
-
-// Mock data - in real app this would come from API/database
-// function getCourseProgressFromDummy(c: {
-// 	readonly _lessons?: readonly { readonly completed?: boolean }[];
-// }) {
-// 	const total = c._lessons?.length ?? 0;
-// 	const done = c._lessons?.filter((l) => l.completed).length ?? 0;
-// 	const pct = total ? Math.round((done / total) * 100) : 0;
-// 	return { total, pct };
-// }
+import { Skeleton } from "../ui/skeleton";
+import Loader from "../loading/loader";
 
 export default function CoursesPage() {
 	const [activeTopic, setActiveTopic] = useState<Topic | "all" | null>("all");
-	const [topics, setTopics] = useState<Topic[]>([]);
-	const [courses, setCourses] = useState<Course[]>([]);
 
-	// Fetch topics
-	useEffect(() => {
-		const fetchTopics = async () => {
-			try {
-				const res = await fetch("/api/topics");
-				const topics = await res.json();
-				setTopics(topics);
+	// ✅ Fetch topics (cached automatically)
+	const { data: topics = [], error: topicErr } = useSWR(
+		"/api/topics",
+		fetcher
+	);
 
-				setActiveTopic("all");
-			} catch (error) {
-				console.error("Error fetching topics:", error);
-			}
-		};
-		fetchTopics();
-	}, []);
+	// ✅ Fetch courses dynamically based on topic
+	const topicParam =
+		activeTopic && activeTopic !== "all" ? `?topic=${activeTopic.id}` : "";
+	const {
+		data: courses = [],
+		error: courseErr,
+		isLoading,
+	} = useSWR(
+		`/api/courses${topicParam}`,
+		fetcher,
+		{ revalidateOnFocus: false } // disable refetch on tab focus
+	);
 
-	// Fetch courses
-	useEffect(() => {
-		const fetchCourses = async () => {
-			try {
-				const param =
-					activeTopic && activeTopic !== "all"
-						? `?topic=${activeTopic.id}`
-						: "";
-				const res = await fetch(`/api/courses${param}`);
-				const courses = await res.json();
-				setCourses(courses);
-			} catch (error) {
-				console.error("Error fetching courses:", error);
-			}
-		};
-		fetchCourses();
-	}, [activeTopic]);
-
-	// Latest = first course
 	const featured = courses[0];
 
+	if (topicErr || courseErr)
+		return <div className="p-8 text-red-500">Failed to load data</div>;
+
+	const firstLoad = !courses.length && isLoading;
+
+	if (firstLoad)
+		return (
+			<div className="p-8">
+				<Loader />
+			</div>
+		);
 	return (
 		<div className="min-h-screen bg-background">
 			<LoggedInNavbar />
 
 			<main className="container mx-auto px-4 py-8">
-				{/* Sidebar (kept), but only All Classes + Topics */}
+				{/* Sidebar */}
 				<div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 					<aside className="lg:col-span-3">
 						<nav className="sticky top-6 space-y-2">
@@ -76,7 +62,7 @@ export default function CoursesPage() {
 								Browse
 							</div>
 							<button
-								className={`w-full text-left px-4 py-3 rounded-lg border-0 transition  ${
+								className={`w-full text-left px-4 py-3 rounded-lg border-0 transition ${
 									activeTopic === "all"
 										? "bg-accent border-accent text-white"
 										: "border-border/50 hover:bg-accent/50"
@@ -91,7 +77,7 @@ export default function CoursesPage() {
 									Topics
 								</div>
 								<div className="space-y-2">
-									{topics.map((t) => (
+									{topics.map((t: Topic) => (
 										<button
 											key={t.id}
 											onClick={() => setActiveTopic(t)}
@@ -111,7 +97,7 @@ export default function CoursesPage() {
 						</nav>
 					</aside>
 
-					{/* Hero (latest course = courses[0]) */}
+					{/* Hero */}
 					<section className="lg:col-span-9">
 						<div className="flex items-baseline justify-between mb-4">
 							<h1 className="text-2xl md:text-3xl font-bold">
@@ -134,33 +120,30 @@ export default function CoursesPage() {
 											"/placeholder.svg"
 										}
 										alt={featured.title}
-										className="w-full  md:h-80 lg:h-[380px] object-cover group-hover:scale-[1.02] transition-transform duration-300"
+										className="w-full md:h-80 lg:h-[380px] object-cover group-hover:scale-[1.02] transition-transform duration-300"
 										height={64}
 										width={1000}
 									/>
 									<div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
-									{/* Top-right badges (no isNew flag; mark as Latest) */}
 									<div className="absolute top-4 right-4 flex gap-2">
-										<Badge className="bg-[#A6DAFF] dark:bg-gray-900 dark:text-white text-black hover:bg-[#A6DAFF]/90">
+										<Badge className="bg-[#A6DAFF] text-black">
 											Latest
 										</Badge>
 										<Badge
 											variant="secondary"
-											className="bg-background/80 backdrop-blur-sm"
+											className="bg-background/80"
 										>
 											1 Lesson
 										</Badge>
 									</div>
 
 									<div className="absolute left-6 right-6 bottom-6">
-										<p className="text-white/70 text-xs md:text-sm uppercase tracking-widest mb-1">
+										<p className="text-white/70 text-xs uppercase tracking-widest mb-1">
 											{featured.topic.name}
 										</p>
-										<h2 className="text-white font-extrabold leading-tight text-3xl md:text-5xl tracking-tight">
-											<span className="block md:mt-2">
-												{featured.title}
-											</span>
+										<h2 className="text-white font-extrabold leading-tight text-3xl md:text-5xl">
+											{featured.title}
 										</h2>
 									</div>
 								</div>
@@ -168,35 +151,6 @@ export default function CoursesPage() {
 						)}
 					</section>
 				</div>
-
-				{/* Topic chips */}
-				{/* <section className="mt-10 mb-6">
-					<div className="flex flex-wrap gap-2">
-						<button
-							onClick={() => setActiveTopic("all")}
-							className={`px-3 py-1.5 text-sm rounded-full border transition ${
-								activeTopic === "all"
-									? "bg-accent border-accent"
-									: "border-border/50 hover:bg-accent/50"
-							}`}
-						>
-							All Topics
-						</button>
-						{topics.map((t) => (
-							<button
-								key={t}
-								onClick={() => setActiveTopic(t)}
-								className={`px-3 py-1.5 text-sm rounded-full border transition ${
-									activeTopic === t
-										? "bg-accent border-accent"
-										: "border-border/50 hover:bg-accent/50"
-								}`}
-							>
-								{t}
-							</button>
-						))}
-					</div>
-				</section> */}
 
 				{/* Grid */}
 				<section>
@@ -215,81 +169,77 @@ export default function CoursesPage() {
 					</div>
 
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-						{courses.map((course) => (
-							<Link
-								key={course.id}
-								href={`/courses/${course.id}`}
-							>
-								<Card className="group  transition-all duration-300 cursor-pointer border-0 border-border/50 hover:border-[#A6DAFF]/50 dark:hover:border-[#A6DAFF]/30 hover:shadow-xl  lg:h-112 py-0 gap-0 hover:scale-103">
-									<CardHeader className="p-0">
-										<div className="relative overflow-hidden rounded-lg">
-											<Image
-												src={
-													course.thumbnail_url ||
-													"/placeholder.svg"
-												}
-												alt={course.title}
-												className="w-full h-54 p-3 object-cover rounded-2xl duration-200"
-												width={540}
-												height={360}
-												placeholder="blur"
-												blurDataURL="/placeholder.svg"
-											/>
-											<Badge
-												variant="secondary"
-												className="absolute top-4 right-4 bg-background/80 backdrop-blur-sm"
-											>
-												{course.topic.name}
-											</Badge>
-										</div>
-									</CardHeader>
-
-									<CardContent className="p-6">
-										<CardTitle className="text-lg mb-2 line-clamp-2 group-hover:text-[#A6DAFF] dark:group-hover:text-[#A6DAFF] transition-colors">
-											{course.title}
-										</CardTitle>
-
-										<p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-											{course.description}
-										</p>
-
-										{/* Meta */}
-										<div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
-											<div className="flex items-center gap-1">
-												<BookOpen className="h-3 w-3" />
-												<span>1 lesson</span>
+						{isLoading
+							? // ✅ Skeleton loader while switching topics
+							  Array.from({ length: 6 }).map((_, i) => (
+									<Card
+										key={i}
+										className="border-0 bg-muted/10 p-4 rounded-xl shadow-sm"
+									>
+										<CardHeader className="p-0">
+											<div className="relative overflow-hidden rounded-lg">
+												<Skeleton className="w-full h-48 rounded-lg" />{" "}
+												{/* thumbnail */}
 											</div>
-										</div>
+										</CardHeader>
 
-										{/* Progress */}
-										{/* <div className="space-y-2">
-											<div className="flex items-center justify-between text-sm">
-												<span className="text-muted-foreground">
-													Progress
-												</span>
-												<span className="font-medium">
-													{course.progress}%
-												</span>
+										<CardContent className="p-6 space-y-3">
+											<Skeleton className="h-5 w-3/4 rounded" />{" "}
+											{/* title */}
+											<Skeleton className="h-4 w-full rounded" />{" "}
+											{/* desc line 1 */}
+											<Skeleton className="h-4 w-5/6 rounded" />{" "}
+											{/* desc line 2 */}
+											<div className="flex gap-2 mt-2">
+												<Skeleton className="h-3 w-6 rounded-full" />
+												<Skeleton className="h-3 w-8 rounded-full" />
 											</div>
-											<Progress
-												value={course.progress}
-												className="h-2"
-											/>
-											{course.progress === 0 ? (
-												<div className="flex items-center gap-1 text-xs text-[#A6DAFF] dark:text-[#A6DAFF] font-medium">
-													<Play className="h-3 w-3" />
-													Start Course
+										</CardContent>
+									</Card>
+							  ))
+							: courses.map((course: Course) => (
+									<Link
+										key={course.id}
+										href={`/courses/${course.id}`}
+									>
+										<Card className="group border-0 hover:border-[#A6DAFF]/50 hover:shadow-xl transition-all">
+											<CardHeader className="p-0">
+												<div className="relative overflow-hidden rounded-lg">
+													<Image
+														src={
+															course.thumbnail_url ||
+															"/placeholder.svg"
+														}
+														alt={course.title}
+														className="w-full h-54 p-3 object-cover rounded-2xl"
+														width={540}
+														height={360}
+													/>
+													<Badge
+														variant="secondary"
+														className="absolute top-4 right-4 bg-background/80"
+													>
+														{course.topic.name}
+													</Badge>
 												</div>
-											) : (
-												<div className="text-xs text-muted-foreground">
-													Continue learning
+											</CardHeader>
+
+											<CardContent className="p-6">
+												<CardTitle className="text-lg mb-2 line-clamp-2 group-hover:text-[#A6DAFF]">
+													{course.title}
+												</CardTitle>
+												<p className="text-muted-foreground text-sm mb-4 line-clamp-2">
+													{course.description}
+												</p>
+
+												<div className="flex items-center gap-4 text-xs text-muted-foreground">
+													<BookOpen className="h-3 w-3" />
+													<span>1 lesson</span>
 												</div>
-											)}
-										</div> */}
-									</CardContent>
-								</Card>
-							</Link>
-						))}
+											</CardContent>
+										</Card>
+									</Link>
+							  ))}
 					</div>
 				</section>
 			</main>
