@@ -16,7 +16,11 @@ import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import type { User as UserType } from "@/types/user";
 
-export default function LoggedInNavbar() {
+export default function LoggedInNavbar({
+	onSearchChange,
+}: {
+	onSearchChange?: (value: string) => void;
+}) {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [searchValue, setSearchValue] = useState("");
 	const [isDarkMode, setIsDarkMode] = useState(false);
@@ -42,6 +46,12 @@ export default function LoggedInNavbar() {
 			icon: User,
 		},
 	];
+
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const v = e.target.value;
+		setSearchValue(v);
+		onSearchChange?.(v);
+	};
 
 	useEffect(() => {
 		const root = document.documentElement;
@@ -135,7 +145,7 @@ export default function LoggedInNavbar() {
 						<input
 							type="text"
 							value={searchValue}
-							onChange={(e) => setSearchValue(e.target.value)}
+							onChange={handleChange}
 							placeholder="Search..."
 							className={`block w-full pl-10 pr-3 py-2 border rounded-lg text-sm  bg-background placeholder-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent border-gray-600 hover:border-gray-500`}
 							// ${

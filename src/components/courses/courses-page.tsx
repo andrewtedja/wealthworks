@@ -3,9 +3,8 @@
 import useSWR from "swr";
 import { useState } from "react";
 import { fetcher } from "@/lib/fetcher";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen } from "lucide-react";
 import Link from "next/link";
 import LoggedInNavbar from "@/components/_layouts/dashboard-navbar";
 import Image from "next/image";
@@ -13,17 +12,19 @@ import type Course from "@/types/course";
 import type Topic from "@/types/topic";
 import { Skeleton } from "../ui/skeleton";
 import Loader from "../loading/loader";
+import CourseCard from "./course-card";
 
 export default function CoursesPage() {
 	const [activeTopic, setActiveTopic] = useState<Topic | "all" | null>("all");
+	const [searchQuery, setSearchQuery] = useState("");
 
-	// ✅ Fetch topics (cached automatically)
+	// Fetch topics (cached automatically)
 	const { data: topics = [], error: topicErr } = useSWR(
 		"/api/topics",
 		fetcher
 	);
 
-	// ✅ Fetch courses dynamically based on topic
+	// Fetch courses dynamically based on topic
 	const topicParam =
 		activeTopic && activeTopic !== "all" ? `?topic=${activeTopic.id}` : "";
 	const {
@@ -38,6 +39,16 @@ export default function CoursesPage() {
 
 	const featured = courses[0];
 
+	const filteredCourses = courses.filter((c: Course) => {
+		if (!searchQuery.trim()) return true;
+		const q = searchQuery.toLowerCase();
+		return (
+			c.title.toLowerCase().includes(q) ||
+			c.description?.toLowerCase().includes(q) ||
+			c.topic?.name.toLowerCase().includes(q)
+		);
+	});
+
 	if (topicErr || courseErr)
 		return <div className="p-8 text-red-500">Failed to load data</div>;
 
@@ -51,7 +62,7 @@ export default function CoursesPage() {
 		);
 	return (
 		<div className="min-h-screen bg-background">
-			<LoggedInNavbar />
+			<LoggedInNavbar onSearchChange={setSearchQuery} />
 
 			<main className="container mx-auto px-4 py-8">
 				{/* Sidebar */}
@@ -197,48 +208,11 @@ export default function CoursesPage() {
 										</CardContent>
 									</Card>
 							  ))
-							: courses.map((course: Course) => (
-									<Link
+							: filteredCourses.map((course: Course) => (
+									<CourseCard
 										key={course.id}
-										href={`/courses/${course.id}`}
-									>
-										<Card className="group border-0 hover:border-[#A6DAFF]/50 hover:shadow-xl transition-all">
-											<CardHeader className="p-0">
-												<div className="relative overflow-hidden rounded-lg">
-													<Image
-														src={
-															course.thumbnail_url ||
-															"/placeholder.svg"
-														}
-														alt={course.title}
-														className="w-full h-54 p-3 object-cover rounded-2xl"
-														width={540}
-														height={360}
-													/>
-													<Badge
-														variant="secondary"
-														className="absolute top-4 right-4 bg-background/80"
-													>
-														{course.topic.name}
-													</Badge>
-												</div>
-											</CardHeader>
-
-											<CardContent className="p-6">
-												<CardTitle className="text-lg mb-2 line-clamp-2 group-hover:text-[#A6DAFF]">
-													{course.title}
-												</CardTitle>
-												<p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-													{course.description}
-												</p>
-
-												<div className="flex items-center gap-4 text-xs text-muted-foreground">
-													<BookOpen className="h-3 w-3" />
-													<span>1 lesson</span>
-												</div>
-											</CardContent>
-										</Card>
-									</Link>
+										course={course}
+									/>
 							  ))}
 					</div>
 				</section>
